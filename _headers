@@ -1,0 +1,10 @@
+# Netlify / Cloudflare Pages header rules (optional hardening when hosted).
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(self), microphone=(), geolocation=(), payment=(), usb=()
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+  Cache-Control: no-cache
+  X-Robots-Tag: noindex, nofollow
