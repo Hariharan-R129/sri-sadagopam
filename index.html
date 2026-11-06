@@ -2,7 +2,7 @@
 <html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-jKz7Q78iQeCm6g8gwjsj8kvC4gEtd3mpeKiJnzYWypI='; style-src 'unsafe-inline'; img-src 'self' data: blob:; manifest-src 'self'; worker-src 'self'; connect-src 'none'; font-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; child-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-VpviB6ZenqqW32Fk/3/XbtP7PKO3/28+lfbdE41OQyw='; style-src 'unsafe-inline'; img-src 'self' data: blob:; manifest-src 'self'; worker-src 'self'; connect-src 'none'; font-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; child-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
@@ -459,6 +459,90 @@ body.has-savebar #toast { bottom: calc(var(--tab-h) + 84px + env(safe-area-inset
 .lockwrap .fileinfo { font-size: .8rem; color: var(--ink-2); margin: -8px 0 14px; }
 .lockwrap .warnbox, .setup .warnbox, .lockwrap .infobox { text-align: left; max-width: 42ch; }
 .lockwrap ul { text-align: left; margin: 6px 0; padding-left: 18px; }
+
+/* ------------------------------------------------------------------
+   v4 — accounts, surplus split, live payment hints, budgets.
+   Same ledger-book language: ruled lines, green for what stays,
+   teal for cash, gold edge for the salary account.
+   ------------------------------------------------------------------ */
+/* summary rows wrap their small label instead of pushing the amount off small phones */
+.summary .line .k { white-space: normal; min-width: 0; }
+.summary .line .k .pct { display: block; margin-left: 0; }
+.summary .line .v { flex-shrink: 0; }
+.summary .line.split { padding-top: 0; padding-bottom: 3px; }
+.summary .line.split .k { font-size: .84rem; color: var(--ink-3); padding-left: 16px; }
+.summary .line.split .v { font-size: .95rem; font-weight: 500; color: var(--ink-2); }
+.summary .line.split.cash .v { color: var(--cash); }
+
+/* where the money is */
+.accts { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; padding: 4px 16px 4px 20px; }
+.acct { position: relative; border: 1px solid var(--paper-3); border-radius: var(--r); padding: 10px 12px 11px; background: var(--paper); cursor: pointer; min-width: 0; }
+.acct:active { background: var(--paper-2); }
+.acct.main { grid-column: 1 / -1; border-color: var(--gold); box-shadow: inset 3px 0 0 var(--gold); }
+.acct.main ~ .acct:nth-child(even):last-child { grid-column: 1 / -1; }
+.acct .an { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+.acct .an .ai { font-size: .95rem; }
+.acct .an .nm { font-weight: 600; }
+.acct .an small { color: var(--ink-3); font-size: .74rem; }
+.acct .ab { font-family: var(--serif); font-size: 1.3rem; line-height: 1.25; margin-top: 3px; color: var(--ink); overflow-wrap: anywhere; }
+.acct.main .ab { font-size: 1.85rem; color: var(--tulsi); }
+.acct.cash .ab { color: var(--cash); }
+.acct .ab.neg { color: var(--danger); }
+.acct .af { font-size: .76rem; color: var(--ink-2); display: flex; gap: 10px; flex-wrap: wrap; margin-top: 2px; }
+.acct .af .in { color: var(--tulsi); }
+.acct .af .out { color: var(--danger); }
+.acct .hintline { font-size: .74rem; color: var(--neela); margin-top: 5px; text-decoration: underline; text-underline-offset: 2px; }
+.acct .recon { font-size: .74rem; margin-top: 5px; }
+.acct .recon.ok { color: var(--tulsi); }
+.acct .recon.off { color: var(--danger); }
+.qa { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 10px 16px 14px 20px; }
+.qbtn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 60px; border-radius: var(--r); border: 1px solid var(--paper-3); background: var(--paper-2); font-size: .8rem; font-weight: 600; color: var(--ink); padding: 6px 4px; line-height: 1.15; text-align: center; touch-action: manipulation; }
+.qbtn span { font-size: 1.25rem; line-height: 1; }
+.qbtn:active { background: var(--paper-3); }
+
+/* add form */
+.payhint { font-size: .82rem; color: var(--ink-2); background: var(--brand-soft); border-left: 3px solid var(--brand); border-radius: 0 var(--r) var(--r) 0; padding: 8px 10px; margin: -4px 0 12px; line-height: 1.45; }
+.payhint:empty { display: none; }
+.payhint b { color: var(--ink); font-weight: 600; }
+.payhint.warn { background: rgba(168,50,31,.09); border-left-color: var(--danger); color: var(--danger); }
+.field .payhint { margin: 8px 0 0; }
+.budgetline { font-size: .82rem; color: var(--ink-2); margin: -4px 0 12px; }
+.budgetline.over { color: var(--danger); font-weight: 600; }
+.datechips { margin-top: 6px; }
+.chip.addchip { border-style: dashed; background: transparent; color: var(--brand); }
+.catgrid .newcat { border-style: dashed; background: transparent; color: var(--brand); }
+.catgrid .newcat .em { font-size: 1.2rem; font-weight: 700; }
+.amount-input.slim input { font-size: 1rem; padding-right: 12px !important; }
+
+/* budgets on Home */
+.catbar.over .amt { color: var(--danger); }
+.catbar .overmsg { font-size: .74rem; color: var(--danger); margin-top: 3px; }
+
+/* accounts screen */
+.tag { display: inline-block; font-size: .68rem; font-weight: 600; color: var(--brand-deep); background: var(--gold-soft); border-radius: 999px; padding: 1px 7px; vertical-align: 2px; margin-left: 4px; }
+:root[data-theme="dark"] .tag { color: var(--ink); }
+.row .amt.neg { color: var(--danger); }
+.row.modelink { grid-template-columns: auto 1fr auto; }
+.row.modelink .ml { display: flex; gap: 6px; align-items: center; }
+.row.modelink select { min-height: 36px; border: 1px solid var(--paper-3); border-radius: var(--r); background: var(--paper); padding: 4px 8px; max-width: 46vw; }
+.addmode { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; }
+.addmode input, .addmode select { min-height: 40px; border: 1px solid var(--paper-3); border-radius: var(--r); background: var(--paper); padding: 6px 10px; min-width: 0; }
+.howto p { margin: 0 0 8px; line-height: 1.5; }
+.bigcheck { width: 24px; height: 24px; accent-color: var(--brand); flex: none; }
+.sheet .toggle { padding-left: 0; padding-right: 0; }
+
+/* category icon picks */
+.emojipick { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; margin: -4px 0 10px; }
+.emojipick button { aspect-ratio: 1; border: 1px solid transparent; border-radius: var(--r); background: var(--paper-2); font-size: 1.1rem; padding: 0; }
+.emojipick button.on { border-color: var(--brand); background: var(--brand-soft); }
+@media (max-width: 360px) { .emojipick { grid-template-columns: repeat(6, 1fr); } }
+
+/* date / month boxes have a wide built-in minimum: let them shrink, and stack pairs on the smallest phones */
+.grid2 > * { min-width: 0; }
+.field input[type=date], .field input[type=month] { min-width: 0; width: 100%; }
+@media (max-width: 359px) { .grid2 { grid-template-columns: 1fr; } }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
 <body>
@@ -1030,7 +1114,7 @@ const Store = {
    Everything here is unit-testable in node.
    ================================================================== */
 const APP_NAME = 'Sri Sadagopam';
-const LEDGER_VERSION = 3;
+const LEDGER_VERSION = 4;
 const BACKUP_MAGIC = 'SRI-SADAGOPAM-BACKUP';
 const CASH = 'Cash';
 
@@ -1056,10 +1140,66 @@ function colorForIndex(i) { const n = CATEGORY_COLORS.length; return CATEGORY_CO
 const DEFAULT_PRAYERS = [{ id: 'p1', text: 'Srimathe Sadagopaya Namah 🙏' }];
 const DEFAULT_CLOSING = 'Sadagopaya Mangalam 🙏';
 const DEFAULT_PAY_MODES = ['UPI', 'Cash', 'Card', 'IOB', 'BOB', 'HDFC'];
+
+/* ---------- accounts (v4) ----------
+   An account is where money actually sits: a bank account, cash in hand, a credit card or a wallet.
+   A payment mode is how you paid ("UPI", "Card"); each mode draws from one account.
+   Accounts that are also modes ("HDFC", "Cash") draw from themselves. */
+const ACCOUNT_KINDS = { bank: 'Bank account', cash: 'Cash in hand', card: 'Credit card', wallet: 'Wallet / prepaid' };
+const LINK_MODE_RX = /^(upi|g ?pay|google ?pay|phone ?pe|paytm|bhim|cred|card|debit ?card|net ?banking|neft|imps|rtgs|cheque|online|auto ?debit|standing instruction)$/i;
+function guessAccountKind(name) {
+  if (name === CASH || /^cash$/i.test(name)) return 'cash';
+  if (/credit/i.test(name)) return 'card';
+  if (/wallet|amazon ?pay|prepaid|food ?card|sodexo|pluxee/i.test(name)) return 'wallet';
+  return 'bank';
+}
+/** Build the account list for a ledger that has none yet (older vaults), from its payment modes and month-end balances. */
+function buildAccounts(payModes, balances) {
+  const names = [];
+  const add = n => { const t = String(n || '').trim(); if (t && !names.some(x => x.toLowerCase() === t.toLowerCase())) names.push(t); };
+  (payModes || []).filter(m => !LINK_MODE_RX.test(m)).forEach(add);
+  (balances || []).forEach(b => (b.accounts || []).forEach(a => add(a.name)));
+  if (!names.some(n => n === CASH)) names.push(CASH);
+  const accounts = names.map(name => ({ name, kind: guessAccountKind(name), primary: false, opening: 0, openingMonth: '', archived: false }));
+  const banks = accounts.filter(a => a.kind === 'bank');
+  const pick = banks.find(a => /hdfc/i.test(a.name)) || banks[0];
+  if (pick) pick.primary = true;
+  else accounts.unshift({ name: 'Bank', kind: 'bank', primary: true, opening: 0, openingMonth: '', archived: false });
+  const rank = a => a.primary ? 0 : a.kind === 'bank' ? 1 : a.kind === 'cash' ? 3 : 2;
+  accounts.sort((x, y) => rank(x) - rank(y));
+  const primary = accounts.find(a => a.primary).name;
+  const modeLinks = {};
+  (payModes || []).forEach(m => { if (!accounts.some(a => a.name === m)) modeLinks[m] = primary; });
+  return { accounts, modeLinks };
+}
+function normalizeAccounts(settings, balances) {
+  if (!Array.isArray(settings.accounts) || !settings.accounts.length) {
+    const b = buildAccounts(settings.payModes, balances);
+    settings.accounts = b.accounts;
+    settings.modeLinks = { ...b.modeLinks, ...(settings.modeLinks || {}) };
+    settings.accountsUpdatedAt = settings.accountsUpdatedAt || '';
+  }
+  settings.accounts = settings.accounts.filter(a => a && a.name).map(a => ({ kind: guessAccountKind(a.name), primary: false, opening: 0, openingMonth: '', archived: false, ...a, name: String(a.name).trim() }));
+  for (const a of settings.accounts) { if (!ACCOUNT_KINDS[a.kind]) a.kind = 'bank'; a.opening = round2(a.opening); if (!/^\d{4}-\d{2}$/.test(a.openingMonth || '')) a.openingMonth = ''; }
+  if (!settings.accounts.some(a => a.name === CASH)) settings.accounts.push({ name: CASH, kind: 'cash', primary: false, opening: 0, openingMonth: '', archived: false });
+  const prim = settings.accounts.filter(a => a.primary && !a.archived);
+  settings.accounts.forEach(a => { a.primary = false; });
+  const p = prim[0] || settings.accounts.find(a => a.kind === 'bank' && !a.archived) || settings.accounts.find(a => !a.archived);
+  if (p) p.primary = true;
+  if (!settings.modeLinks || typeof settings.modeLinks !== 'object') settings.modeLinks = {};
+  // every account is also a payment mode; every other mode points at a real account
+  for (const a of settings.accounts) if (!a.archived && !settings.payModes.includes(a.name)) settings.payModes.push(a.name);
+  for (const m of settings.payModes) {
+    if (settings.accounts.some(a => a.name === m)) { delete settings.modeLinks[m]; continue; }
+    if (!settings.accounts.some(a => a.name === settings.modeLinks[m])) settings.modeLinks[m] = p ? p.name : CASH;
+  }
+  if (typeof settings.lastPaidVia !== 'string') settings.lastPaidVia = '';
+  return settings;
+}
 const INCOME_KINDS = ['Salary', 'Bonus', 'Dividend', 'Refund', 'Gift', 'Other'];
 
 function defaultCategories(now = new Date().toISOString()) {
-  const c = (id, name, emoji, kind, bucket, subs = []) => ({ id, name, emoji, kind, bucket, subs, archived: false, updatedAt: now });
+  const c = (id, name, emoji, kind, bucket, subs = []) => ({ id, name, emoji, kind, bucket, subs, budget: 0, defaultPay: '', archived: false, updatedAt: now });
   return [
     c('home_share', 'Home Share', '🏠', 'simple', 'home'),
     c('amma', 'Amma', '👩‍🦳', 'simple', 'home'),
@@ -1077,7 +1217,8 @@ function defaultCategories(now = new Date().toISOString()) {
     c('own', 'Own Expenses', '🧍', 'open', 'own'),
     c('daily', 'Other Daily Expenses', '🛒', 'open', 'own'),
     c('invest', 'Investments', '📈', 'open', 'invest'),
-    c('atm', 'ATM / Cash withdrawal', '🏧', 'transfer', 'own')
+    c('atm', 'ATM / Cash withdrawal', '🏧', 'transfer', 'own'),
+    c('xfer', 'Bank transfer', '🔁', 'transfer', 'home')
   ].map((x, i) => ({ ...x, order: i, color: colorForIndex(i) }));
 }
 
@@ -1099,6 +1240,8 @@ function defaultSettings() {
 
 function defaultLedger(now = new Date()) {
   const ts = now.toISOString();
+  const settings = defaultSettings();
+  normalizeAccounts(settings, []);
   return {
     version: LEDGER_VERSION,
     meta: { createdAt: ts, updatedAt: ts },
@@ -1108,12 +1251,12 @@ function defaultLedger(now = new Date()) {
     entries: [],
     balances: [],
     audit: [],
-    settings: defaultSettings()
+    settings
   };
 }
 
 function normalizeEntry(e) {
-  return { deleted: false, recurring: false, note: '', sub: '', label: '', paidVia: '', to: '', bucket: '', ...e };
+  return { deleted: false, recurring: false, note: '', sub: '', label: '', paidVia: '', to: '', bucket: '', countAs: '', ...e };
 }
 
 /** Fill gaps in an older/partial ledger so the UI can rely on every field. Also runs v1 → v2 migration. */
@@ -1127,7 +1270,9 @@ function normalizeLedger(l) {
   out.prayers = Array.isArray(out.prayers) && out.prayers.length ? out.prayers : d.prayers;
   out.categories = Array.isArray(out.categories) && out.categories.length ? out.categories : d.categories;
   out.categories = out.categories.map((c, i) => {
-    const n = { subs: [], archived: false, order: i, kind: 'simple', bucket: 'own', emoji: '•', ...c };
+    const n = { subs: [], archived: false, order: i, kind: 'simple', bucket: 'own', emoji: '•', budget: 0, defaultPay: '', ...c };
+    n.budget = Math.max(0, round2(n.budget));
+    if (typeof n.defaultPay !== 'string') n.defaultPay = '';
     if (!KINDS[n.kind]) n.kind = 'simple';
     if (!BUCKETS[n.bucket]) n.bucket = 'own';
     if (!/^#[0-9a-f]{6}$/i.test(n.color || '')) n.color = colorForIndex(typeof n.order === 'number' ? n.order : i);
@@ -1144,6 +1289,14 @@ function normalizeLedger(l) {
   if (!Array.isArray(out.settings.migrationNotes)) out.settings.migrationNotes = [];
   if (!Array.isArray(out.settings.payModes) || !out.settings.payModes.length) out.settings.payModes = DEFAULT_PAY_MODES.slice();
   if (!out.settings.payModes.includes(CASH)) out.settings.payModes.push(CASH);
+  const hadAccounts = !!(l && l.settings && Array.isArray(l.settings.accounts) && l.settings.accounts.length);
+  if (!hadAccounts) { delete out.settings.accounts; out.settings.modeLinks = (l && l.settings && l.settings.modeLinks) || {}; }
+  normalizeAccounts(out.settings, out.balances);
+  if (!hadAccounts && fromVersion < 4 && l && Array.isArray(l.entries) && l.entries.length) {
+    const prim = out.settings.accounts.find(a => a.primary);
+    const links = Object.entries(out.settings.modeLinks).map(([m, a]) => `${m} → ${a}`).join(', ');
+    out.settings.migrationNotes.push(`Accounts are set up: ${out.settings.accounts.filter(a => !a.archived).map(a => a.name + (a.primary ? ' (salary, main)' : '')).join(', ')}.${links ? ' ' + links + '.' : ''} Entries with no payment mode count against ${prim ? prim.name : 'the main account'}. Add opening balances under More → Accounts so bank balances match your passbook.`);
+  }
   // Only a vault that already recorded a seenVersion keeps it; older vaults get their own version so "what's new" shows once.
   const hadSeen = l && l.settings && typeof l.settings.seenVersion === 'number';
   out.settings.seenVersion = hadSeen ? l.settings.seenVersion : fromVersion;
@@ -1158,6 +1311,10 @@ function normalizeLedger(l) {
         out.settings.migrationNotes.push(`"${c.name}" is now treated as a cash withdrawal, not an expense. Its ${n} entr${n === 1 ? 'y' : 'ies'} no longer count in totals; the cash shows under "Cash in hand" until you record what it was spent on.`);
       }
     }
+  }
+  if (fromVersion < 4 && !out.categories.some(c => c.id === 'xfer')) {
+    const i = out.categories.length;
+    out.categories.push({ id: 'xfer', name: 'Bank transfer', emoji: '🔁', kind: 'transfer', bucket: 'home', subs: [], budget: 0, defaultPay: '', archived: false, order: i, color: colorForIndex(i), updatedAt: new Date().toISOString() });
   }
   if (!out.categories.some(c => c.kind === 'transfer')) {
     const i = out.categories.length;
@@ -1277,7 +1434,59 @@ function catById(ledger, id) { return ledger.categories.find(c => c.id === id) |
 function catName(ledger, id) { const c = catById(ledger, id); return c ? c.name : (id === '__income' ? 'Income' : 'Uncategorised'); }
 function visibleCategories(ledger) { return ledger.categories.filter(c => !c.archived).sort((a, b) => a.order - b.order); }
 function isTransferCat(c) { return !!c && c.kind === 'transfer'; }
-function isTransfer(ledger, e) { return e.type === 'transfer' || (e.type !== 'income' && isTransferCat(catById(ledger, e.catId))); }
+/** A money movement between own accounts. A withdrawal / transfer marked "count as expense" is an expense instead. */
+function isTransfer(ledger, e) { return e.countAs !== 'expense' && (e.type === 'transfer' || (e.type !== 'income' && isTransferCat(catById(ledger, e.catId)))); }
+function isMovementCat(ledger, e) { return e.type !== 'income' && (e.type === 'transfer' || isTransferCat(catById(ledger, e.catId))); }
+
+/* ---------- accounts: lookups and balances ---------- */
+function accountsList(ledger, { all = false } = {}) { return ledger.settings.accounts.filter(a => all || !a.archived); }
+function accountByName(ledger, name) { return ledger.settings.accounts.find(a => a.name === name) || null; }
+function primaryAccount(ledger) { return (ledger.settings.accounts.find(a => a.primary) || ledger.settings.accounts[0] || { name: CASH }).name; }
+/** The account a payment mode draws from. Blank or unknown modes count against the main (salary) account. */
+function accountFor(ledger, mode) {
+  const m = String(mode || '').trim();
+  if (m && accountByName(ledger, m)) return m;
+  const link = m && ledger.settings.modeLinks ? ledger.settings.modeLinks[m] : '';
+  if (link && accountByName(ledger, link)) return link;
+  return primaryAccount(ledger);
+}
+function isCashAccount(ledger, name) { const a = accountByName(ledger, name); return !!a && a.kind === 'cash'; }
+/** [account, delta] pairs for one entry: income credits, expenses debit, transfers move (or debit only, if counted as expense). */
+function entryFlows(ledger, e) {
+  const a = Number(e.amount) || 0;
+  if (e.type === 'income') return [[accountFor(ledger, e.paidVia), a]];
+  if (isMovementCat(ledger, e)) {
+    const from = accountFor(ledger, e.paidVia);
+    if (e.countAs === 'expense') return [[from, -a]];
+    const to = accountFor(ledger, e.to || CASH);
+    return from === to ? [] : [[from, -a], [to, a]];
+  }
+  return [[accountFor(ledger, e.paidVia), -a]];
+}
+/** Every account with its opening, this month's money in / out, and the balance at the end of `month`. */
+function accountBalances(ledger, month) {
+  const rows = new Map(accountsList(ledger, { all: true }).map(acc => [acc.name, { ...acc, inflow: 0, outflow: 0, net: 0, closing: acc.openingMonth && acc.openingMonth <= month ? acc.opening : 0, used: false }]));
+  for (const e of activeEntries(ledger)) {
+    if (e.month > month) continue;
+    for (const [name, d] of entryFlows(ledger, e)) {
+      const r = rows.get(name); if (!r) continue;
+      if (r.openingMonth && e.month < r.openingMonth) continue;
+      r.closing += d; r.used = true;
+      if (e.month === month) { if (d >= 0) r.inflow += d; else r.outflow -= d; r.net += d; }
+    }
+  }
+  return Array.from(rows.values()).map(r => ({ ...r, inflow: round2(r.inflow), outflow: round2(r.outflow), net: round2(r.net), closing: round2(r.closing), hasOpening: !!r.openingMonth }));
+}
+/** This month's surplus split by where it stayed: in cash vs in bank / other accounts. The two always add up to the surplus. */
+function surplusSplit(ledger, month) {
+  let cash = 0, bank = 0;
+  for (const r of accountBalances(ledger, month)) { if (r.kind === 'cash') cash += r.net; else bank += r.net; }
+  return { cash: round2(cash), bank: round2(bank) };
+}
+/** Spent so far this month in one category (for budgets). */
+function categorySpent(ledger, catId, month) {
+  return round2(activeEntries(ledger).filter(e => e.month === month && e.catId === catId && e.type === 'expense' && !isTransfer(ledger, e)).reduce((s, e) => s + (Number(e.amount) || 0), 0));
+}
 
 const byDateDesc = (a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : (a.createdAt < b.createdAt ? 1 : -1));
 function entriesForMonth(ledger, month, type) {
@@ -1318,21 +1527,10 @@ function monthTotals(ledger, month) {
 
 /** Cash in hand at the end of `uptoMonth`: withdrawals to Cash − cash spending − cash deposited back (+ cash income). */
 function cashInHand(ledger, uptoMonth) {
-  let cash = 0;
-  for (const e of activeEntries(ledger)) {
-    if (uptoMonth && e.month > uptoMonth) continue;
-    const a = Number(e.amount) || 0;
-    if (e.type === 'income') { if (e.paidVia === CASH) cash += a; continue; }
-    if (isTransfer(ledger, e)) {
-      if ((e.to || CASH) === CASH) cash += a;
-      if (e.paidVia === CASH) cash -= a;
-      continue;
-    }
-    if (e.paidVia === CASH) cash -= a;
-  }
-  return round2(cash);
+  const m = uptoMonth || '9999-12';
+  return round2(accountBalances(ledger, m).filter(r => r.kind === 'cash').reduce((s, r) => s + r.closing, 0));
 }
-function hasCashFlow(ledger) { return activeEntries(ledger).some(e => e.paidVia === CASH || isTransfer(ledger, e)); }
+function hasCashFlow(ledger) { return activeEntries(ledger).some(e => isCashAccount(ledger, accountFor(ledger, e.paidVia)) || isMovementCat(ledger, e)) || accountsList(ledger).some(a => a.kind === 'cash' && a.openingMonth); }
 
 /** Per-day totals for a month: index 0 = day 1. */
 function dayTotals(ledger, month) {
@@ -1353,7 +1551,7 @@ function dayTotals(ledger, month) {
 /** Every expense category (transfers excluded) with this month's amount — zero rows included so the portfolio is complete. */
 function monthPortfolio(ledger, month) {
   const t = monthTotals(ledger, month);
-  const cats = ledger.categories.filter(c => !isTransferCat(c)).sort((a, b) => a.order - b.order);
+  const cats = ledger.categories.filter(c => !isTransferCat(c) || (t.byCat[c.id] && t.byCat[c.id].amount > 0)).sort((a, b) => a.order - b.order);
   const items = cats
     .filter(c => !c.archived || (t.byCat[c.id] && t.byCat[c.id].amount > 0))
     .map(c => ({ catId: c.id, name: c.name, emoji: c.emoji, color: c.color, bucket: c.bucket, amount: t.byCat[c.id] ? t.byCat[c.id].amount : 0, count: t.byCat[c.id] ? t.byCat[c.id].count : 0 }));
@@ -1381,7 +1579,7 @@ function categoryMonthMatrix(ledger, year) {
     catTot[e.catId] = (catTot[e.catId] || 0) + a;
     monthTot[m] += a; total += a;
   }
-  const cats = ledger.categories.filter(c => !isTransferCat(c) && (!c.archived || catTot[c.id])).sort((a, b) => a.order - b.order)
+  const cats = ledger.categories.filter(c => (!isTransferCat(c) || catTot[c.id]) && (!c.archived || catTot[c.id])).sort((a, b) => a.order - b.order)
     .map(c => ({ catId: c.id, name: c.name, emoji: c.emoji, color: c.color, months: (rows[c.id] || Array(12).fill(0)).map(round2), total: round2(catTot[c.id] || 0) }));
   if (rows.__none) cats.push({ catId: '__none', name: 'Uncategorised', emoji: '•', color: '#9C9084', months: rows.__none.map(round2), total: round2(catTot.__none) });
   cats.sort((a, b) => b.total - a.total || a.name.localeCompare(b.name));
@@ -1443,7 +1641,9 @@ function audit(ledger, action, ref, detail) {
 function addEntry(ledger, data) {
   const now = new Date().toISOString();
   const cat = data.type === 'income' ? null : catById(ledger, data.catId);
-  const transfer = isTransferCat(cat);
+  const movement = isTransferCat(cat);
+  const asExpense = movement && data.countAs === 'expense';
+  const transfer = movement && !asExpense;
   const e = normalizeEntry({
     id: uid(),
     type: data.type === 'income' ? 'income' : 'expense',
@@ -1457,6 +1657,7 @@ function addEntry(ledger, data) {
     paidVia: (data.paidVia || '').trim(),
     to: transfer ? ((data.to || CASH).trim()) : '',
     bucket: data.type === 'income' || transfer ? '' : (BUCKETS[data.bucket] ? data.bucket : (cat ? cat.bucket : 'own')),
+    countAs: asExpense ? 'expense' : '',
     recurring: !!data.recurring,
     createdAt: now, updatedAt: now, deleted: false
   });
@@ -1470,12 +1671,13 @@ function updateEntry(ledger, id, patch) {
   const e = ledger.entries.find(x => x.id === id);
   if (!e) return null;
   const before = { ...e };
-  const allowed = ['date', 'month', 'catId', 'sub', 'label', 'amount', 'note', 'paidVia', 'to', 'bucket', 'recurring', 'type'];
+  const allowed = ['date', 'month', 'catId', 'sub', 'label', 'amount', 'note', 'paidVia', 'to', 'bucket', 'recurring', 'type', 'countAs'];
   for (const k of allowed) if (k in patch) e[k] = k === 'amount' ? round2(patch[k]) : patch[k];
   if (!('month' in patch) && 'date' in patch && e.type === 'expense') e.month = monthOf(e.date);
-  if (e.type === 'income') { e.catId = '__income'; e.bucket = ''; e.to = ''; }
-  else if (isTransfer(ledger, e)) { e.bucket = ''; if (!e.to) e.to = CASH; }
-  else e.to = '';
+  if (e.type === 'income') { e.catId = '__income'; e.bucket = ''; e.to = ''; e.countAs = ''; }
+  else if (!isMovementCat(ledger, e)) { e.to = ''; e.countAs = ''; }
+  else if (e.countAs === 'expense') { e.to = ''; if (!BUCKETS[e.bucket]) { const c = catById(ledger, e.catId); e.bucket = c ? c.bucket : 'own'; } }
+  else { e.countAs = ''; e.bucket = ''; if (!e.to) e.to = CASH; }
   e.updatedAt = new Date().toISOString();
   const changed = allowed.filter(k => JSON.stringify(before[k]) !== JSON.stringify(e[k]));
   audit(ledger, 'edit', id, changed.map(k => `${k}: ${before[k]} → ${e[k]}`).join('; '));
@@ -1521,14 +1723,14 @@ function upsertCategory(ledger, cat) {
   const existing = cat.id ? catById(ledger, cat.id) : null;
   const kind = KINDS[cat.kind] ? cat.kind : 'simple';
   if (existing) {
-    Object.assign(existing, { name: cat.name, emoji: cat.emoji || existing.emoji || '•', kind, bucket: BUCKETS[cat.bucket] ? cat.bucket : existing.bucket, subs: kind === 'fixed' ? (cat.subs || []) : [], updatedAt: now });
+    Object.assign(existing, { name: cat.name, emoji: cat.emoji || existing.emoji || '•', kind, bucket: BUCKETS[cat.bucket] ? cat.bucket : existing.bucket, subs: kind === 'fixed' ? (cat.subs || []) : [], budget: Math.max(0, round2(cat.budget)), defaultPay: cat.defaultPay || '', updatedAt: now });
     if (/^#[0-9a-f]{6}$/i.test(cat.color || '')) existing.color = cat.color;
     audit(ledger, 'category', existing.id, `edited ${existing.name}`);
     touch(ledger);
     return existing;
   }
   const i = ledger.categories.length;
-  const c = { id: 'c_' + uid(), name: cat.name, emoji: cat.emoji || '•', kind, bucket: BUCKETS[cat.bucket] ? cat.bucket : 'own', subs: kind === 'fixed' ? (cat.subs || []) : [], archived: false, order: i, color: /^#[0-9a-f]{6}$/i.test(cat.color || '') ? cat.color : colorForIndex(i), updatedAt: now };
+  const c = { id: 'c_' + uid(), name: cat.name, emoji: cat.emoji || '•', kind, bucket: BUCKETS[cat.bucket] ? cat.bucket : 'own', subs: kind === 'fixed' ? (cat.subs || []) : [], budget: Math.max(0, round2(cat.budget)), defaultPay: cat.defaultPay || '', archived: false, order: i, color: /^#[0-9a-f]{6}$/i.test(cat.color || '') ? cat.color : colorForIndex(i), updatedAt: now };
   ledger.categories.push(c);
   audit(ledger, 'category', c.id, `added ${c.name}`);
   touch(ledger);
@@ -1551,6 +1753,68 @@ function moveCategory(ledger, id, dir) {
   return true;
 }
 function categoryUsage(ledger, id) { return activeEntries(ledger).filter(e => e.catId === id).length; }
+/** Add one more type to a fixed-type category (from the add screen). Returns the clean name, or '' if it already exists. */
+function addSubType(ledger, catId, name) {
+  const c = catById(ledger, catId); const n = String(name || '').trim();
+  if (!c || !n || c.subs.some(s => s.toLowerCase() === n.toLowerCase())) return '';
+  c.subs.push(n); c.updatedAt = new Date().toISOString();
+  audit(ledger, 'category', c.id, `added type ${n} to ${c.name}`); touch(ledger);
+  return n;
+}
+/** Remove a category that no entry (not even one in Trash) uses. */
+function deleteCategory(ledger, id) {
+  if (ledger.entries.some(e => e.catId === id)) return false;
+  const i = ledger.categories.findIndex(c => c.id === id); if (i < 0) return false;
+  const [c] = ledger.categories.splice(i, 1);
+  audit(ledger, 'category', id, `deleted ${c.name}`); touch(ledger);
+  return true;
+}
+function categoryNameTaken(ledger, name, exceptId) { const n = String(name || '').trim().toLowerCase(); return ledger.categories.some(c => c.id !== exceptId && c.name.trim().toLowerCase() === n); }
+
+/* ---------- accounts: edits ---------- */
+function touchAccounts(ledger, detail) { ledger.settings.accountsUpdatedAt = new Date().toISOString(); audit(ledger, 'accounts', '', detail); touch(ledger); }
+function upsertAccount(ledger, oldName, acc) {
+  const s = ledger.settings; const name = String(acc.name || '').trim();
+  if (!name) return null;
+  let a = oldName ? accountByName(ledger, oldName) : null;
+  if (!a) { a = { name, kind: 'bank', primary: false, opening: 0, openingMonth: '', archived: false }; s.accounts.push(a); }
+  if (oldName && oldName !== name) {
+    // rename everywhere the old name was used
+    for (const e of ledger.entries) { if (e.paidVia === oldName) e.paidVia = name; if (e.to === oldName) e.to = name; }
+    s.payModes = s.payModes.map(m => m === oldName ? name : m);
+    for (const k of Object.keys(s.modeLinks)) if (s.modeLinks[k] === oldName) s.modeLinks[k] = name;
+    for (const c of ledger.categories) if (c.defaultPay === oldName) c.defaultPay = name;
+    if (s.lastPaidVia === oldName) s.lastPaidVia = name;
+  }
+  a.name = name; a.kind = ACCOUNT_KINDS[acc.kind] ? acc.kind : a.kind;
+  a.opening = round2(acc.opening); a.openingMonth = /^\d{4}-\d{2}$/.test(acc.openingMonth || '') ? acc.openingMonth : '';
+  if (acc.primary) s.accounts.forEach(x => { x.primary = x === a; });
+  normalizeAccounts(s, ledger.balances);
+  touchAccounts(ledger, `account ${name}: opening ${a.opening}${a.openingMonth ? ' from ' + a.openingMonth : ''}`);
+  return a;
+}
+function accountUsage(ledger, name) { return activeEntries(ledger).filter(e => e.paidVia === name || e.to === name).length; }
+function setAccountArchived(ledger, name, archived) {
+  const a = accountByName(ledger, name); if (!a || (a.kind === 'cash' && a.name === CASH)) return false;
+  a.archived = !!archived; if (archived) { a.primary = false; ledger.settings.payModes = ledger.settings.payModes.filter(m => m !== name); }
+  normalizeAccounts(ledger.settings, ledger.balances); touchAccounts(ledger, `${archived ? 'archived' : 'restored'} account ${name}`); return true;
+}
+function setModeLink(ledger, mode, account) {
+  if (!accountByName(ledger, account)) return false;
+  ledger.settings.modeLinks[mode] = account; touchAccounts(ledger, `${mode} draws from ${account}`); return true;
+}
+function addPayMode(ledger, mode, account) {
+  const m = String(mode || '').trim(); const s = ledger.settings;
+  if (!m || s.payModes.some(x => x.toLowerCase() === m.toLowerCase())) return false;
+  s.payModes.push(m); s.modeLinks[m] = accountByName(ledger, account) ? account : primaryAccount(ledger);
+  normalizeAccounts(s, ledger.balances); touchAccounts(ledger, `added payment mode ${m}`); return true;
+}
+function removePayMode(ledger, mode) {
+  const s = ledger.settings;
+  if (accountByName(ledger, mode)) return false;
+  s.payModes = s.payModes.filter(m => m !== mode); delete s.modeLinks[mode];
+  touchAccounts(ledger, `removed payment mode ${mode}`); return true;
+}
 
 function getBalances(ledger, month) { return ledger.balances.find(b => b.month === month) || null; }
 function setBalances(ledger, month, accounts, note) {
@@ -1597,7 +1861,8 @@ function buildSyncPayload(ledger, { since = null, deviceName = '' } = {}) {
   return {
     v: 2, kind: 'sync', from: deviceName || '', createdAt: new Date().toISOString(), since: since || null,
     entries: pick(ledger.entries), categories: pick(ledger.categories), balances: pick(ledger.balances),
-    prayers: ledger.prayers.slice(), closing: ledger.closing
+    prayers: ledger.prayers.slice(), closing: ledger.closing,
+    accounts: { list: ledger.settings.accounts, modeLinks: ledger.settings.modeLinks, payModes: ledger.settings.payModes, updatedAt: ledger.settings.accountsUpdatedAt || '' }
   };
 }
 
@@ -1633,6 +1898,15 @@ function applySyncPayload(ledger, payload) {
   const pTexts = new Set(ledger.prayers.map(p => p.text));
   for (const p of payload.prayers || []) if (p && p.text && !pTexts.has(p.text)) { ledger.prayers.push({ id: p.id || uid(), text: p.text }); pTexts.add(p.text); }
   if (!ledger.closing && typeof payload.closing === 'string') ledger.closing = payload.closing;
+  const acc = payload.accounts;
+  if (acc && Array.isArray(acc.list) && acc.list.length && (acc.updatedAt || '') > (ledger.settings.accountsUpdatedAt || '')) {
+    ledger.settings.accounts = acc.list.map(a => ({ ...a }));
+    ledger.settings.modeLinks = { ...(acc.modeLinks || {}) };
+    if (Array.isArray(acc.payModes) && acc.payModes.length) ledger.settings.payModes = acc.payModes.slice();
+    ledger.settings.accountsUpdatedAt = acc.updatedAt;
+    normalizeAccounts(ledger.settings, ledger.balances);
+    res.accounts = true;
+  }
   audit(ledger, 'sync', payload.from || '', `${res.added} added, ${res.updated} updated, ${res.deleted} deleted, ${res.categories} categories`);
   touch(ledger);
   return res;
@@ -1642,7 +1916,8 @@ function applySyncPayload(ledger, payload) {
 function mergeLedgers(base, incoming) {
   const out = normalizeLedger(JSON.parse(JSON.stringify(base)));
   const inc = normalizeLedger(incoming);
-  const r = applySyncPayload(out, { from: 'backup', entries: inc.entries, categories: inc.categories, balances: inc.balances, prayers: inc.prayers, closing: inc.closing });
+  const r = applySyncPayload(out, { from: 'backup', entries: inc.entries, categories: inc.categories, balances: inc.balances, prayers: inc.prayers, closing: inc.closing,
+    accounts: { list: inc.settings.accounts, modeLinks: inc.settings.modeLinks, payModes: inc.settings.payModes, updatedAt: inc.settings.accountsUpdatedAt || '' } });
   return { ledger: out, added: r.added, updated: r.updated, deleted: r.deleted };
 }
 
@@ -1652,12 +1927,13 @@ function csvCell(v) {
   return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 function toCSV(ledger) {
-  const head = ['Date', 'Month', 'Type', 'Category', 'Sub-category', 'Item', 'Amount', 'Bucket', 'Paid via / From', 'To', 'Note', 'Recurring'];
+  const head = ['Date', 'Month', 'Type', 'Category', 'Sub-category', 'Item', 'Amount', 'Bucket', 'Paid via / From', 'To', 'Account debited / credited', 'Note', 'Recurring'];
   const lines = [head.join(',')];
   for (const e of activeEntries(ledger).sort((a, b) => (a.date < b.date ? -1 : 1))) {
     const transfer = isTransfer(ledger, e);
     lines.push([e.date, e.month, transfer ? 'transfer' : e.type, e.type === 'income' ? 'Income' : catName(ledger, e.catId), e.sub, e.label, e.amount,
-      BUCKETS[e.bucket] && !transfer ? BUCKETS[e.bucket].label : '', e.paidVia, transfer ? (e.to || CASH) : '', e.note, e.recurring ? 'yes' : ''].map(csvCell).join(','));
+      BUCKETS[e.bucket] && !transfer ? BUCKETS[e.bucket].label : '', e.paidVia, transfer ? (e.to || CASH) : '',
+      entryFlows(ledger, e).map(([a, d]) => `${a} ${d >= 0 ? '+' : '−'}${Math.abs(d)}`).join(' / '), e.note, e.recurring ? 'yes' : ''].map(csvCell).join(','));
   }
   return '﻿' + lines.join('\r\n');
 }
@@ -1683,8 +1959,12 @@ function monthStatement(ledger, month) {
   L.push(`Sri / Kaingaryams: ${t.buckets.sri}`);
   L.push(`Investments: ${t.buckets.invest}`);
   L.push(`Surplus of Month: ${t.savings}`);
+  const split = surplusSplit(ledger, month);
+  L.push(`   kept in bank / accounts: ${split.bank}`);
+  L.push(`   kept as cash: ${split.cash}`);
   if (t.transfers.total) L.push(`Cash withdrawn (not an expense): ${t.transfers.toCash}`);
-  if (hasCashFlow(ledger)) L.push(`Cash in hand (end of month): ${cashInHand(ledger, month)}`);
+  L.push('');
+  for (const r of accountBalances(ledger, month).filter(r => !r.archived && (r.used || r.hasOpening || r.primary))) L.push(`${r.name}${r.primary ? ' (main)' : ''} balance at month end: ${r.closing}`);
   const b = getBalances(ledger, month);
   if (b) for (const a of b.accounts) L.push(`${a.name}: ${a.amount}`);
   L.push('');
@@ -12304,6 +12584,10 @@ const state = {
   lockMsg: '',
   suppressLockUntil: 0,
   amtTarget: null,
+  lastUnlockAt: 0,
+  _opAt: 0,
+  _clipAt: 0,
+  _catFromAdd: false,
   sync: { code: null, parts: [], svgs: [], idx: 0, timer: null, paused: false, scope: 'since', collector: null, stream: null, scanTimer: null, built: null },
   _pendingImport: null,
   /* where the vault lives on this device */
@@ -12339,11 +12623,66 @@ function toast(msg, ms = 2200, action) {
   clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), ms);
 }
 function money(n, opts = {}) { return fmtINR(n, { masked: state.masked, ...opts }); }
+/** Keep the phone keyboard from learning item names, notes and amounts, and stop autofill offering them elsewhere. */
+function hardenInputs(root) {
+  if (!root) return;
+  // Buttons inside a form default to "submit": the phone's Go / Enter key would press the first one (Expense) instead of Save.
+  root.querySelectorAll('form button:not([type])').forEach(b => { b.type = 'button'; });
+  root.querySelectorAll('input:not([type=password]):not([type=hidden]):not([type=checkbox]):not([type=date]):not([type=month]), textarea').forEach(el => {
+    if (!el.hasAttribute('autocomplete')) el.setAttribute('autocomplete', 'off');
+    el.setAttribute('autocorrect', 'off'); el.spellcheck = false;
+    el.setAttribute('data-lpignore', 'true'); el.setAttribute('data-1p-ignore', 'true');
+  });
+}
+/** Ask for a short piece of text in a sheet. Resolves with the trimmed string or null. */
+function askText(title, label, { value = '', placeholder = '', hint = '' } = {}) {
+  return new Promise(resolve => {
+    sheet(`<h3>${h(title)}</h3>${hint ? `<p class="note">${h(hint)}</p>` : ''}
+      <div class="field"><label for="at-v">${h(label)}</label><input id="at-v" type="text" value="${h(value)}" placeholder="${h(placeholder)}" autocapitalize="words" data-autofocus></div>
+      <div class="btnrow"><button class="btn ghost" data-action="at-cancel">Cancel</button><button class="btn" data-action="at-ok">Add</button></div>`);
+    const root = byId('sheet-root');
+    const done = v => { root.onclick = null; closeSheet(); resolve(v === null ? null : String(v).trim()); };
+    byId('at-v').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); done(byId('at-v').value); } });
+    if ('ontouchstart' in window) setTimeout(() => { const i = byId('at-v'); if (i) i.focus(); }, 60);
+    root.onclick = e => {
+      const a = e.target.closest('[data-action]'); if (!a) return;
+      if (a.dataset.action === 'at-ok') done(byId('at-v').value);
+      else if (a.dataset.action === 'at-cancel' || (a.dataset.action === 'sheet-scrim' && e.target === a)) done(null);
+    };
+  });
+}
+/** Ask for the PIN again before something that weakens protection or writes readable data. */
+async function reauth(why) {
+  const type = state.env && state.env.pinType === 'pass' ? 'passphrase' : 'PIN';
+  const secret = await askSecret(`Confirm with your ${type}`, why);
+  if (secret === null) return false;
+  try { const v = await Store.get('vault'); const k = await deriveKey(secret, unb64(state.env.salt), state.env.iter); await decryptJSON(k, v.iv, v.ct); return true; }
+  catch (_) { toast(`Wrong ${type}. Nothing was changed.`); audit(state.ledger, 'security', '', 'wrong PIN at a confirmation prompt'); persist(); return false; }
+}
+/** Refuse PINs that thieves try first. Returns a reason, or '' when the secret is fine. */
+const COMMON_PINS = new Set(['1234', '1111', '0000', '1212', '7777', '1004', '2000', '4444', '2222', '6969', '9999', '3333', '5555', '6666', '1122', '1313', '8888', '4321', '2001', '1010', '2580', '0852', '1001', '1007', '112233', '121212', '123123', '654321', '696969', '159753', '147258', '147852', '123321', '111222', '000000', '123456', '12345678', '87654321', '11223344']);
+function weakSecret(v, type) {
+  const s = String(v || '');
+  if (type === 'pin') {
+    if (COMMON_PINS.has(s)) return 'That PIN is on the list thieves try first. Pick digits without a pattern.';
+    if (/^(\d)\1+$/.test(s)) return 'All digits are the same. Pick digits without a pattern.';
+    const d = s.split('').map(Number); const steps = d.slice(1).map((x, i) => (x - d[i] + 10) % 10);
+    if (steps.every(x => x === 1) || steps.every(x => x === 9)) return 'Digits in a running order (like 3456) are guessed quickly.';
+    const half = s.length / 2;
+    if (s.length % 2 === 0 && s.slice(0, half) === s.slice(half)) return 'A repeated half (like 4747) is guessed quickly.';
+    if (s.length === 6 && s.slice(0, 2) === s.slice(2, 4) && s.slice(2, 4) === s.slice(4)) return 'A repeated pair is guessed quickly.';
+    return '';
+  }
+  if (/^(.)\1+$/.test(s)) return 'All characters are the same.';
+  if (/^(password|passphrase|sadagopam|srisadagopam|khatabook|12345678|qwertyui|asdfghjk)/i.test(s)) return 'That passphrase is too easy to guess.';
+  return '';
+}
 function suppressLock(ms = 60000) { state.suppressLockUntil = Date.now() + ms; }
 function sheet(html, { onOpen } = {}) {
   const root = byId('sheet-root');
   root.innerHTML = `<div class="scrim" data-action="sheet-scrim"><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div></div>`;
   if (onOpen) onOpen(root.querySelector('.sheet'));
+  hardenInputs(root);
   const first = root.querySelector('[data-autofocus]') || root.querySelector('input:not([type=hidden]),select,textarea');
   if (first && !('ontouchstart' in window)) first.focus();
 }
@@ -12418,9 +12757,15 @@ async function unlockWith(secret) {
     state.masked = !!ledger.settings.maskDefault;
     state.dirty = needsFileSave() && state.fileStale;
     state.view = 'home';
-    await Store.set('lock', { fails: 0, until: 0 });
+    state.lastUnlockAt = lockMeta.lastUnlockAt || 0;
+    await Store.set('lock', { fails: 0, until: 0, failTotal: 0, lastFailAt: 0, lastUnlockAt: Date.now() });
     startIdleWatch();
     render();
+    if (lockMeta.failTotal) {
+      const n = lockMeta.failTotal;
+      audit(ledger, 'security', '', `${n} wrong attempt${n === 1 ? '' : 's'} before this unlock`); persist();
+      toast(`${n} wrong ${env.pinType === 'pass' ? 'passphrase' : 'PIN'} attempt${n === 1 ? '' : 's'} since you last opened the ledger${lockMeta.lastFailAt ? `, the last at ${fmtLocal(new Date(lockMeta.lastFailAt).toISOString())}` : ''}. If that was not you, change your PIN under More.`, 9000);
+    }
     if (ledger.settings.seenVersion < LEDGER_VERSION) whatsNew();
     // Pre-derive keys for known sync partners (same PIN assumed) so syncing needs no typing.
     (async () => {
@@ -12441,7 +12786,7 @@ async function unlockWith(secret) {
       return false;
     }
     const wait = lockoutWait(fails);
-    await Store.set('lock', { fails, until: wait ? Date.now() + wait * 1000 : 0 });
+    await Store.set('lock', { ...lockMeta, fails, until: wait ? Date.now() + wait * 1000 : 0, failTotal: (lockMeta.failTotal || 0) + 1, lastFailAt: Date.now() });
     state.pin = '';
     const what = env.pinType === 'pin' ? 'PIN' : 'passphrase';
     state.lockMsg = wait ? `Wrong ${what}. Locked for ${wait} s.` : `Wrong ${what}. ${3 - fails} tr${3 - fails === 1 ? 'y' : 'ies'} left before a wait.`;
@@ -12453,6 +12798,7 @@ async function unlockWith(secret) {
 
 function lock(reason) {
   if (state.locked) return;
+  if (state._clipAt) clearClipboard();
   stopScanner(); stopQrCycle();
   state.key = null; state.keys = new Map(); state.ledger = null; state.locked = true; state.pin = ''; state.add = null;
   state.sync.code = null; state.sync.parts = []; state.sync.svgs = []; state.sync.built = null;
@@ -12489,7 +12835,7 @@ function render() {
   view.className = '';
   top.innerHTML = topbar();
   tabs.innerHTML = tabbar();
-  const views = { home: homeView, add: addView, ledger: ledgerView, reports: reportsView, categories: categoriesView, settings: settingsView, trash: trashView, audit: auditView, balances: balancesView, prayers: prayersView, privacy: privacyView, sync: syncView };
+  const views = { home: homeView, add: addView, ledger: ledgerView, reports: reportsView, categories: categoriesView, settings: settingsView, trash: trashView, audit: auditView, balances: balancesView, prayers: prayersView, privacy: privacyView, sync: syncView, accounts: accountsView };
   view.innerHTML = (views[state.view] || homeView)();
   renderSaveBar();
   afterRender();
@@ -12497,14 +12843,16 @@ function render() {
 function afterRender() {
   const amt = byId('f-amount');
   if (amt) updateCalc(amt);
+  updatePayHint();
+  hardenInputs(byId('view'));
   const focusEl = byId('view').querySelector('[data-autofocus]');
   if (focusEl && !('ontouchstart' in window)) focusEl.focus();
 }
 
 function topbar() {
-  const titles = { home: 'Sri Sadagopam', add: state.add && state.add.id ? 'Edit entry' : 'New entry', ledger: 'Ledger', reports: 'Portfolio', categories: 'Categories', settings: 'More', trash: 'Trash', audit: 'Change log', balances: 'Month balances', prayers: 'Prayers', privacy: 'Privacy status', sync: 'Sync devices' };
-  const sub = { home: monthLabel(state.month), ledger: monthLabel(state.month), reports: state.report.scope === 'year' ? String(state.year) : monthLabel(state.month) }[state.view] || '';
-  const backTo = { trash: 'settings', audit: 'settings', balances: 'settings', prayers: 'settings', privacy: 'settings', categories: 'settings', sync: 'settings' }[state.view];
+  const titles = { home: 'Sri Sadagopam', add: state.add && state.add.id ? 'Edit entry' : 'New entry', ledger: 'Ledger', reports: 'Portfolio', categories: 'Categories', settings: 'More', trash: 'Trash', audit: 'Change log', balances: 'Passbook balances', prayers: 'Prayers', privacy: 'Privacy status', sync: 'Sync devices', accounts: 'Accounts' };
+  const sub = { home: monthLabel(state.month), ledger: monthLabel(state.month), accounts: monthLabel(state.month), reports: state.report.scope === 'year' ? String(state.year) : monthLabel(state.month) }[state.view] || '';
+  const backTo = { trash: 'settings', audit: 'settings', balances: 'accounts', prayers: 'settings', privacy: 'settings', categories: 'settings', sync: 'settings', accounts: 'settings' }[state.view];
   return `<div class="bar-row">
     ${backTo ? `<button class="iconbtn" data-action="go" data-view="${backTo}" aria-label="Back">${ICONS.back}</button>` : ''}
     <h1 class="bar-title">${h(titles[state.view] || 'Sri Sadagopam')}${sub ? `<small>${h(sub)}</small>` : ''}</h1>
@@ -12514,7 +12862,7 @@ function topbar() {
   </div>`;
 }
 function tabbar() {
-  const settingsFamily = ['categories', 'trash', 'audit', 'balances', 'prayers', 'privacy', 'sync'];
+  const settingsFamily = ['categories', 'trash', 'audit', 'balances', 'prayers', 'privacy', 'sync', 'accounts'];
   const tab = (v, label, icon) => `<button data-action="go" data-view="${v}" class="${state.view === v || (v === 'settings' && settingsFamily.includes(state.view)) ? 'on' : ''}" aria-current="${state.view === v ? 'page' : 'false'}">${ICONS[icon]}<span>${label}</span></button>`;
   return `<div class="tabs">${tab('home', 'Home', 'home')}${tab('ledger', 'Ledger', 'ledger')}${tab('add', 'Add', 'add')}${tab('reports', 'Portfolio', 'chart')}${tab('settings', 'More', 'more')}</div>`;
 }
@@ -12574,7 +12922,7 @@ function setupView() {
       <button data-action="setup-type" data-t="pin" class="${s.pinType === 'pin' ? 'on' : ''}" role="tab">PIN (digits)</button>
       <button data-action="setup-type" data-t="pass" class="${s.pinType === 'pass' ? 'on' : ''}" role="tab">Passphrase</button></div></div>
     <div class="grid2">
-      <div class="field"><label for="su-pin1">${s.pinType === 'pin' ? 'Choose a PIN (4–8 digits)' : 'Choose a passphrase (8+)'}</label>
+      <div class="field"><label for="su-pin1">${s.pinType === 'pin' ? 'Choose a PIN (6 digits is safest)' : 'Choose a passphrase (8+)'}</label>
         <input id="su-pin1" type="password" ${s.pinType === 'pin' ? 'inputmode="numeric" pattern="[0-9]*" maxlength="8"' : ''} autocomplete="new-password" autocapitalize="off" spellcheck="false"></div>
       <div class="field"><label for="su-pin2">Type it again</label>
         <input id="su-pin2" type="password" ${s.pinType === 'pin' ? 'inputmode="numeric" pattern="[0-9]*" maxlength="8"' : ''} autocomplete="new-password" autocapitalize="off" spellcheck="false"></div>
@@ -12593,6 +12941,8 @@ async function setupFinish() {
   if (s.pinType === 'pin' && !/^\d{4,8}$/.test(v1)) { s.err = 'PIN must be 4 to 8 digits.'; render(); return; }
   if (s.pinType === 'pass' && v1.length < 8) { s.err = 'Passphrase must be at least 8 characters.'; render(); return; }
   if (v1 !== v2) { s.err = 'The two entries do not match.'; render(); return; }
+  const weak = weakSecret(v1, s.pinType);
+  if (weak) { s.err = weak; render(); return; }
   const btn = $('[data-action=setup-finish]'); if (btn) { btn.disabled = true; btn.textContent = 'Creating…'; }
   const salt = randomBytes(16);
   const key = await deriveKey(v1, salt, KDF_ITERATIONS);
@@ -12650,8 +13000,7 @@ function homeView() {
   const recent = entriesForMonth(L, state.month).slice(0, 6);
   const bal = getBalances(L, state.month);
   const rec = recurringCandidates(L, state.month);
-  const cashFlow = hasCashFlow(L);
-  const cash = cashFlow ? cashInHand(L, state.month) : 0;
+  const split = surplusSplit(L, state.month);
   const lastBackup = L.settings.lastBackupAt ? (Date.now() - Date.parse(L.settings.lastBackupAt)) / 864e5 : Infinity;
   const nudgeBackup = !needsFileSave() && activeEntries(L).length >= 10 && lastBackup > 30;
   return `${prayerBanner()}
@@ -12661,17 +13010,17 @@ function homeView() {
     <div class="line"><span class="k">Sum of expenses <span class="pct">${t.count} entr${t.count === 1 ? 'y' : 'ies'}</span></span><span class="dots"></span><span class="v num">${money(t.expense)}</span></div>
     <hr>
     <div class="line big ${t.savings >= 0 ? 'pos' : 'neg'}"><span class="k">Surplus of month</span><span style="flex:1"></span><span class="v num">${money(t.savings)}${pct && !state.masked ? `<span class="pct">${pct} saved</span>` : ''}</span></div>
+    <div class="line split"><span class="k">kept in bank</span><span class="dots"></span><span class="v num">${money(split.bank)}</span></div>
+    <div class="line split cash"><span class="k">kept as cash</span><span class="dots"></span><span class="v num">${money(split.cash)}</span></div>
     <hr>
     <div class="line home"><span class="k">Expenses to Home</span><span class="dots"></span><span class="v num">${money(t.buckets.home)}</span></div>
     <div class="line own"><span class="k">Own expenses</span><span class="dots"></span><span class="v num">${money(t.buckets.own)}</span></div>
     <div class="line sri"><span class="k">Sri / Kaingaryams</span><span class="dots"></span><span class="v num">${money(t.buckets.sri)}</span></div>
     <div class="line invest"><span class="k">Investments</span><span class="dots"></span><span class="v num">${money(t.buckets.invest)}</span></div>
-    ${t.transfers.total || cashFlow ? `<hr>
-    ${t.transfers.toCash ? `<div class="line cash"><span class="k">Cash withdrawn <span class="pct">not an expense</span></span><span class="dots"></span><span class="v num">${money(t.transfers.toCash)}</span></div>` : ''}
-    <div class="line cash"><span class="k">Cash in hand <span class="pct">end of month, estimate</span></span><span class="dots"></span><span class="v num">${money(cash)}</span></div>` : ''}
-    ${bal && bal.accounts.length ? `<hr>${bal.accounts.map(a => `<div class="line"><span class="k">${h(a.name)} <span class="pct">month end</span></span><span class="dots"></span><span class="v num">${money(a.amount)}</span></div>`).join('')}` : ''}
-    <div class="line" style="justify-content:flex-end;gap:14px;flex-wrap:wrap"><button class="link" data-action="go" data-view="balances">${bal ? 'Edit' : 'Add'} bank balances</button><button class="link" data-action="statement">Copy statement</button></div>
+    ${t.transfers.toCash ? `<div class="line cash"><span class="k">Cash withdrawn <span class="pct">moved, not spent</span></span><span class="dots"></span><span class="v num">${money(t.transfers.toCash)}</span></div>` : ''}
+    <div class="line" style="justify-content:flex-end;gap:14px;flex-wrap:wrap"><button class="link" data-action="statement">Copy statement</button></div>
   </div></section>
+  ${accountsCard(state.month)}
   ${rec.length ? `<div class="warnbox">${rec.length} recurring entr${rec.length === 1 ? 'y' : 'ies'} from ${monthLabel(shiftMonth(state.month, -1))} not yet in this month. <button class="link" data-action="recurring-review">Review and add</button></div>` : ''}
   ${nudgeBackup ? `<div class="warnbox">No backup in the last 30 days. <button class="link" data-action="go" data-view="settings">Save a ledger file or backup</button></div>` : ''}
   <section class="page" aria-label="Daily spend">
@@ -12680,9 +13029,10 @@ function homeView() {
   </section>
   <section class="page" aria-label="By category">
     <div class="ph"><h3>By category</h3><button class="lnk" data-action="go" data-view="reports">Portfolio</button></div>
-    ${cats.length ? cats.map(c => `<div class="catbar" data-action="ledger-cat" data-id="${h(c.catId)}" role="button" tabindex="0">
-        <div class="l"><span class="nm"><span class="swatch" style="background:${h(c.color)}"></span>${h(c.emoji + ' ' + c.name)}<span class="pct">${!state.masked && t.expense ? fmtPct(c.amount, t.expense) : ''}</span></span><span class="amt num">${money(c.amount)}</span></div>
-        <div class="bar"><i style="width:${Math.max(2, (c.amount / max) * 100).toFixed(1)}%;background:${h(c.color)}"></i></div></div>`).join('')
+    ${cats.length ? cats.map(c => { const cc = catById(L, c.catId); const bud = cc && cc.budget > 0 ? cc.budget : 0; const over = bud && c.amount > bud;
+      return `<div class="catbar ${over ? 'over' : ''}" data-action="ledger-cat" data-id="${h(c.catId)}" role="button" tabindex="0">
+        <div class="l"><span class="nm"><span class="swatch" style="background:${h(c.color)}"></span>${h(c.emoji + ' ' + c.name)}<span class="pct">${bud ? (state.masked ? 'budget' : 'of ' + fmtINR(bud, { whole: true })) : (!state.masked && t.expense ? fmtPct(c.amount, t.expense) : '')}</span></span><span class="amt num">${money(c.amount)}</span></div>
+        <div class="bar ${bud ? 'budget' : ''}"><i style="width:${Math.min(100, Math.max(2, (c.amount / (bud || max)) * 100)).toFixed(1)}%;background:${over ? 'var(--danger)' : h(c.color)}"></i></div>${over ? `<div class="overmsg">${state.masked ? 'Over budget' : 'Over budget by ' + fmtINR(c.amount - bud)}</div>` : ''}</div>`; }).join('')
       : `<div class="empty"><b>No expenses yet for ${h(monthLabel(state.month))}</b>Tap + to record the first one.</div>`}
   </section>
   <section class="page" aria-label="Recent entries">
@@ -12691,6 +13041,33 @@ function homeView() {
   </section>
   ${L.closing ? `<p class="closing">${h(L.closing)}</p>` : ''}
   <button class="fab" data-action="go" data-view="add" data-fresh="1" aria-label="Add entry">+</button>`;
+}
+
+/* ---------- where the money is (Home) ---------- */
+const ACCOUNT_ICON = { bank: '🏦', cash: '💵', card: '💳', wallet: '👛' };
+function accountsCard(month) {
+  const L = state.ledger;
+  const rows = accountBalances(L, month).filter(r => !r.archived && (r.primary || r.kind === 'cash' || r.used || r.hasOpening));
+  const stmt = getBalances(L, month);
+  const isNow = month === currentMonth();
+  const tile = r => {
+    const s = stmt && stmt.accounts.find(a => a.name.trim().toLowerCase() === r.name.toLowerCase());
+    const diff = s ? round2(s.amount - r.closing) : null;
+    return `<div class="acct ${h(r.kind)} ${r.primary ? 'main' : ''}" data-action="acct-open" data-name="${h(r.name)}" role="button" tabindex="0" aria-label="${h(r.name)}">
+      <div class="an"><span class="ai" aria-hidden="true">${ACCOUNT_ICON[r.kind] || '🏦'}</span><span class="nm">${h(r.name)}</span><small>${r.primary ? 'salary account' : h(ACCOUNT_KINDS[r.kind].toLowerCase())}</small></div>
+      <div class="ab num ${r.closing < 0 ? 'neg' : ''}">${money(r.closing)}</div>
+      <div class="af num">${r.inflow || r.outflow ? `${r.inflow ? `<span class="in">+${money(r.inflow)} in</span>` : ''}${r.outflow ? `<span class="out">−${money(r.outflow)} out</span>` : ''}` : '<span>no movement this month</span>'}</div>
+      ${!r.hasOpening && r.kind !== 'cash' ? '<div class="hintline">Tap to add the opening balance</div>' : ''}
+      ${s ? `<div class="recon ${Math.abs(diff) < 1 ? 'ok' : 'off'}">${Math.abs(diff) < 1 ? 'Matches passbook' : `Passbook ${money(s.amount)}, differs by ${money(Math.abs(diff))}`}</div>` : ''}
+    </div>`;
+  };
+  return `<section class="page" aria-label="Where the money is"><div class="ph"><h3>Where the money is</h3><span class="sub">${isNow ? 'balance now' : 'at the end of ' + h(monthShort(month))}</span></div>
+    <div class="accts">${rows.map(tile).join('')}</div>
+    <div class="qa">
+      <button class="qbtn" data-action="quick-withdraw"><span aria-hidden="true">🏧</span>Withdraw cash</button>
+      <button class="qbtn" data-action="quick-cashspend"><span aria-hidden="true">💵</span>Spend from cash</button>
+      <button class="qbtn" data-action="quick-transfer"><span aria-hidden="true">🔁</span>Transfer</button>
+    </div></section>`;
 }
 
 function entryRow(e) {
@@ -12702,13 +13079,14 @@ function entryRow(e) {
   if (e.type === 'income') metaBits.push(`for ${monthLabel(e.month)}`);
   else if (transfer) metaBits.push((cat ? cat.name : 'Transfer') + (e.label ? ' · ' + e.label : ''));
   else if (cat) metaBits.push(cat.name + (e.sub && e.label ? ' · ' + e.sub : ''));
-  if (!transfer && e.paidVia) metaBits.push(e.paidVia);
+  if (!transfer && e.paidVia) { const acc = accountFor(L, e.paidVia); metaBits.push(acc !== e.paidVia && L.settings.modeLinks[e.paidVia] ? `${e.paidVia} (${acc})` : e.paidVia); }
+  if (e.countAs === 'expense') metaBits.push('counted as expense');
   if (e.recurring) metaBits.push('↻');
   const amtClass = e.type === 'income' ? 'in' : transfer ? 'tr' : '';
   return `<li class="row click" data-action="edit-entry" data-id="${h(e.id)}" role="button" tabindex="0">
     <span class="em" aria-hidden="true">${cat ? `<i style="background:${h(cat.color)}"></i>` : ''}${e.type === 'income' ? '💰' : h(cat ? cat.emoji : '•')}</span>
     <span class="t"><span class="n">${transfer ? title : h(title)}</span><span class="m">${h(fmtDay(e.date))} · ${h(metaBits.join(' · '))}</span></span>
-    <span class="amt num ${amtClass}">${e.type === 'income' ? '+' : transfer ? '⇄ ' : ''}${money(e.amount)}${e.type === 'expense' && !transfer && e.bucket ? `<small>${h(BUCKETS[e.bucket].short)}</small>` : transfer ? '<small>cash</small>' : ''}</span>
+    <span class="amt num ${amtClass}">${e.type === 'income' ? '+' : transfer ? '⇄ ' : ''}${money(e.amount)}${e.type === 'expense' && !transfer && e.bucket ? `<small>${h(BUCKETS[e.bucket].short)}</small>` : transfer ? `<small>${isCashAccount(L, accountFor(L, e.to || CASH)) ? 'to cash' : 'moved'}</small>` : ''}</span>
   </li>`;
 }
 
@@ -12729,8 +13107,11 @@ function newDraft(prefill = {}) {
     label: prefill.label || '',
     amount: prefill.amount != null ? String(prefill.amount) : '',
     note: prefill.note || '',
-    paidVia: prefill.paidVia || '',
+    paidVia: prefill.paidVia !== undefined ? prefill.paidVia : defaultPaidVia(prefill.type || 'expense', cat),
+    payTouched: !!prefill.payTouched,
+    fromQuick: !!prefill.fromQuick,
     to: prefill.to || CASH,
+    countAs: prefill.countAs || '',
     bucket: prefill.bucket || (cat ? cat.bucket : ''),
     bucketOverride: prefill.bucketOverride || '',
     recurring: !!prefill.recurring,
@@ -12740,6 +13121,64 @@ function newDraft(prefill = {}) {
   };
 }
 function batchRow(date, catId) { return { date, catId: catId || '', sub: '', label: '', amount: '' }; }
+function defaultPaidVia(type, cat) {
+  const L = state.ledger, s = L.settings;
+  if (type === 'income') return primaryAccount(L);
+  if (cat && isTransferCat(cat)) return primaryAccount(L);
+  if (cat && cat.defaultPay && s.payModes.includes(cat.defaultPay)) return cat.defaultPay;
+  if (s.lastPaidVia && s.payModes.includes(s.lastPaidVia)) return s.lastPaidVia;
+  return s.payModes.includes('UPI') ? 'UPI' : primaryAccount(L);
+}
+/** The first own account that is not `from` (for transfers). Banks first. */
+function otherAccount(L, from) {
+  const list = accountsList(L).filter(a => a.name !== from);
+  return (list.find(a => a.kind === 'bank') || list[0] || { name: CASH }).name;
+}
+function payHintEl() { return '<div class="payhint" id="f-payhint" aria-live="polite"></div>'; }
+/** Live line under "Paid via": which account it hits and what that account holds before and after this entry. */
+function updatePayHint() {
+  const el = byId('f-payhint'); const d = state.add; const L = state.ledger;
+  if (!el || !d || !L) return;
+  const sel = byId('f-paid') || byId('f-from');
+  const paid = sel ? sel.value : d.paidVia;
+  let amt = 0;
+  if (d.mode === 'batch' && d.type === 'expense') document.querySelectorAll('[data-rb=amount]').forEach(i => { const v = parseAmount(i.value); if (!isNaN(v) && v > 0) amt += v; });
+  else { const v = byId('f-amount') ? parseAmount(byId('f-amount').value) : NaN; amt = !isNaN(v) && v > 0 ? v : 0; }
+  amt = round2(amt);
+  const month = d.type === 'income' ? ((byId('f-month') || {}).value || d.month) : monthOf((byId('f-date') || {}).value || d.date);
+  if (!/^\d{4}-\d{2}$/.test(month)) { el.innerHTML = ''; return; }
+  const base = d.id ? { ...L, entries: L.entries.filter(e => e.id !== d.id) } : L;
+  const rows = accountBalances(base, month);
+  const acc = accountFor(L, paid); const r = rows.find(x => x.name === acc);
+  if (!r) { el.innerHTML = ''; return; }
+  const cat = catById(L, d.catId);
+  const movement = d.type === 'expense' && d.mode !== 'batch' && cat && isTransferCat(cat);
+  const sign = d.type === 'income' ? 1 : -1;
+  const after = round2(r.closing + sign * amt);
+  const via = !paid ? `No mode picked, so it counts against ${acc}. ` : paid !== acc ? `${paid} takes money from ${acc}. ` : '';
+  const label = r.kind === 'cash' ? 'Cash in hand' : acc;
+  let html = `${h(via)}${h(label)} ${money(r.closing)}${amt ? ` <span aria-hidden="true">→</span> <b>${money(after)}</b>` : ''}`;
+  let warn = false;
+  if (movement && d.countAs !== 'expense') {
+    const toSel = byId('f-to'); const toAcc = accountFor(L, toSel ? toSel.value : d.to);
+    const tr = rows.find(x => x.name === toAcc);
+    if (tr && toAcc !== acc) html += `<br>${h(tr.kind === 'cash' ? 'Cash in hand' : toAcc)} ${money(tr.closing)}${amt ? ` <span aria-hidden="true">→</span> <b>${money(round2(tr.closing + amt))}</b>` : ''}`;
+  }
+  if (sign < 0 && amt && r.kind === 'cash' && after < 0) { warn = true; html += `<br>That is more than the cash you have. Record the ATM withdrawal first, or pick UPI or a bank.`; }
+  else if (sign < 0 && amt && r.kind === 'bank' && r.hasOpening && after < 0) { warn = true; html += `<br>This takes ${h(acc)} below zero.`; }
+  el.innerHTML = html; el.classList.toggle('warn', warn);
+}
+function dateField(d, label = 'Date') {
+  const today = todayISO(), y = new Date(); y.setDate(y.getDate() - 1); const yest = todayISO(y);
+  return `<div class="field"><label for="f-date">${h(label)}</label><input id="f-date" type="date" value="${h(d.date)}" data-bind="date">
+    <div class="chips datechips"><button type="button" class="chip small ${d.date === today ? 'on' : ''}" data-action="add-date" data-d="${today}">Today</button><button type="button" class="chip small ${d.date === yest ? 'on' : ''}" data-action="add-date" data-d="${yest}">Yesterday</button></div></div>`;
+}
+function budgetLine(cat, d) {
+  if (!cat || !(cat.budget > 0)) return '';
+  const spent = categorySpent(state.ledger, cat.id, monthOf(d.date)) - (d.id ? (Number((state.ledger.entries.find(e => e.id === d.id) || {}).amount) || 0) : 0);
+  const left = round2(cat.budget - spent);
+  return `<div class="budgetline ${left < 0 ? 'over' : ''}">Budget ${money(cat.budget)} this month, ${money(Math.max(0, spent))} spent, ${left >= 0 ? money(left) + ' left' : money(-left) + ' over'}</div>`;
+}
 
 function addView() {
   const L = state.ledger;
@@ -12754,7 +13193,9 @@ function addView() {
   const modeSeg = (editing || d.type === 'income') ? '' : `<div class="field"><div class="seg" role="tablist" aria-label="Entry mode">
     <button data-action="add-mode" data-m="single" class="${d.mode === 'single' ? 'on' : ''}" role="tab">One entry</button>
     <button data-action="add-mode" data-m="batch" class="${d.mode === 'batch' ? 'on' : ''}" role="tab">Several at once</button></div></div>`;
-  const paySelect = (id, bind, value, { exclude = [], allowBlank = true } = {}) => `<select id="${id}" data-bind="${bind}">${allowBlank ? '<option value="">—</option>' : ''}${L.settings.payModes.filter(m => !exclude.includes(m)).map(m => `<option ${value === m ? 'selected' : ''}>${h(m)}</option>`).join('')}</select>`;
+  const modeText = m => { const acc = accountFor(L, m); return acc !== m ? `${m} (from ${acc})` : m; };
+  const paySelect = (id, bind, value, { exclude = [], allowBlank = true } = {}) => `<select id="${id}" data-bind="${bind}">${allowBlank ? '<option value="">—</option>' : ''}${L.settings.payModes.filter(m => !exclude.includes(m)).map(m => `<option value="${h(m)}" ${value === m ? 'selected' : ''}>${h(modeText(m))}</option>`).join('')}${value && !L.settings.payModes.includes(value) && !exclude.includes(value) ? `<option value="${h(value)}" selected>${h(value)}</option>` : ''}</select>`;
+  const accSelect = (id, bind, value, { exclude = [] } = {}) => `<select id="${id}" data-bind="${bind}">${accountsList(L).filter(a => !exclude.includes(a.name)).map(a => `<option value="${h(a.name)}" ${value === a.name ? 'selected' : ''}>${h(a.name)}${a.kind === 'cash' ? '' : ' · ' + h(ACCOUNT_KINDS[a.kind].toLowerCase())}</option>`).join('')}</select>`;
 
   let body = '';
   if (d.type === 'income') {
@@ -12767,6 +13208,7 @@ function addView() {
         <div class="field"><label for="f-kind">Type</label><select id="f-kind" data-bind="incomeKind">${INCOME_KINDS.map(k => `<option ${d.incomeKind === k ? 'selected' : ''}>${k}</option>`).join('')}</select></div>
         <div class="field"><label for="f-paid">Credited to</label>${paySelect('f-paid', 'paidVia', d.paidVia)}</div>
       </div>
+      ${payHintEl()}
       <div class="field"><label for="f-label">Label</label><input id="f-label" type="text" value="${h(d.label)}" placeholder="e.g. December salary" autocomplete="off" data-bind="label"></div>
       ${amountField(d)}
       <div class="field"><label for="f-note">Note</label><input id="f-note" type="text" value="${h(d.note)}" autocomplete="off" data-bind="note"></div>
@@ -12774,41 +13216,50 @@ function addView() {
   } else if (d.mode === 'batch') {
     const bcats = cats.filter(c => !isTransferCat(c));
     body = `
-      <p class="note">Add several entries in one go, for example what a cash withdrawal was spent on. Each row can have its own category.</p>
+      <p class="note">Add several entries in one go, for example what a cash withdrawal was spent on. Each row can have its own category. Every amount box takes sums like 120+80.</p>
       <div id="bcards">${d.rows.map((r, i) => batchCard(r, i, bcats)).join('')}</div>
       <button type="button" class="btn soft sm" data-action="batch-add-row">+ Add row</button>
       ${opbar()}
       <div class="field"><div class="lbl">Counts towards</div><div class="chips"><button type="button" class="chip ${!d.bucketOverride ? 'on' : ''}" data-action="add-bucket-override" data-b="">Auto (by category)</button>${BUCKET_ORDER.map(b => `<button type="button" class="chip ${b} ${d.bucketOverride === b ? 'on' : ''}" data-action="add-bucket-override" data-b="${b}">${BUCKETS[b].label}</button>`).join('')}</div></div>
-      <div class="field"><label for="f-paid">Paid via (all rows)</label>${paySelect('f-paid', 'paidVia', d.paidVia)}</div>`;
+      <div class="field"><label for="f-paid">Paid via (all rows)</label>${paySelect('f-paid', 'paidVia', d.paidVia)}${payHintEl()}</div>`;
   } else if (cat && isTransferCat(cat)) {
     body = `
-      <div class="field"><div class="lbl">Category</div><div class="catgrid">${cats.map(c => catButton(c, d.catId)).join('')}</div></div>
-      <div class="infobox">A withdrawal or transfer moves money; it is <b>not</b> an expense and does not change your totals. Record what the cash is spent on as normal entries paid via Cash. "Cash in hand" on Home tracks the rest.</div>
+      <div class="field"><div class="lbl">Category</div><div class="catgrid">${cats.map(c => catButton(c, d.catId)).join('')}${newCatTile()}</div></div>
+      <div class="field"><div class="lbl">How should this count?</div><div class="seg" role="tablist" aria-label="How it counts">
+        <button type="button" data-action="add-countas" data-c="" class="${d.countAs !== 'expense' ? 'on' : ''}" role="tab">${/atm|cash/i.test(cat.name) ? 'Move to cash' : 'Move to my account'}</button>
+        <button type="button" data-action="add-countas" data-c="expense" class="${d.countAs === 'expense' ? 'on' : ''}" role="tab">Count as expense</button></div>
+        <div class="hint">${d.countAs === 'expense'
+          ? `The amount is taken from the account and counted as spent now. Do not also record what the ${/atm|cash/i.test(cat.name) ? 'cash' : 'money'} was spent on, or it counts twice.`
+          : `The amount leaves one account and lands in another, so totals do not change. ${/atm|cash/i.test(cat.name) ? 'Record what the cash is spent on as entries paid via Cash.' : ''}`}</div></div>
       <div class="grid2">
-        <div class="field"><label for="f-from">From account</label>${paySelect('f-from', 'paidVia', d.paidVia, { exclude: [d.to] })}</div>
-        <div class="field"><label for="f-to">To</label>${paySelect('f-to', 'to', d.to || CASH, { allowBlank: false })}</div>
+        <div class="field"><label for="f-from">From</label>${paySelect('f-from', 'paidVia', d.paidVia, { allowBlank: false })}</div>
+        ${d.countAs === 'expense' ? `<div class="field"><label for="f-label">Paid to (optional)</label><input id="f-label" type="text" value="${h(d.label)}" placeholder="e.g. Amma, house rent" autocapitalize="words" data-bind="label"></div>`
+          : `<div class="field"><label for="f-to">To</label>${accSelect('f-to', 'to', d.to || CASH, { exclude: [accountFor(L, d.paidVia)] })}</div>`}
       </div>
+      ${payHintEl()}
       ${amountField(d)}
-      <div class="grid2">
-        <div class="field"><label for="f-date">Date</label><input id="f-date" type="date" value="${h(d.date)}" data-bind="date"></div>
-        <div class="field"><label for="f-label">Label (optional)</label><input id="f-label" type="text" value="${h(d.label)}" placeholder="e.g. ATM near office" autocomplete="off" data-bind="label"></div>
-      </div>
+      ${d.countAs === 'expense' ? bucketChips(d, cat) : ''}
+      ${d.countAs === 'expense' ? dateField(d) : `<div class="grid2">
+        ${dateField(d)}
+        <div class="field"><label for="f-label">Label (optional)</label><input id="f-label" type="text" value="${h(d.label)}" placeholder="${/atm|cash/i.test(cat.name) ? 'e.g. ATM near office' : 'e.g. to IOB for EMI'}" data-bind="label"></div>
+      </div>`}
       <div class="field"><label for="f-note">Note</label><input id="f-note" type="text" value="${h(d.note)}" placeholder="optional" autocomplete="off" data-bind="note"></div>
       ${recurringToggle(d)}`;
   } else {
     const sugg = cat ? labelSuggestions(L, cat.id) : [];
     body = `
-      <div class="field"><div class="lbl">Category</div><div class="catgrid">${cats.map(c => catButton(c, d.catId)).join('')}</div>
-        ${!cats.length ? '<p class="note">No categories yet. Add some under More → Categories.</p>' : ''}</div>
-      ${cat && cat.kind === 'fixed' ? `<div class="field"><div class="lbl">${h(cat.name)} · type</div><div class="chips">${cat.subs.map(s => `<button type="button" class="chip ${d.sub === s ? 'on' : ''}" data-action="add-sub" data-sub="${h(s)}">${h(s)}</button>`).join('')}</div></div>` : ''}
+      <div class="field"><div class="lbl">Category</div><div class="catgrid">${cats.map(c => catButton(c, d.catId)).join('')}${newCatTile()}</div></div>
+      ${budgetLine(cat, d)}
+      ${cat && cat.kind === 'fixed' ? `<div class="field"><div class="lbl">Type of ${h(cat.name)}</div><div class="chips">${cat.subs.map(s => `<button type="button" class="chip ${d.sub === s ? 'on' : ''}" data-action="add-sub" data-sub="${h(s)}">${h(s)}</button>`).join('')}<button type="button" class="chip addchip" data-action="add-newsub">+ New type</button></div></div>` : ''}
       ${cat ? `<div class="field"><label for="f-label">${cat.kind === 'open' ? 'Name of the ' + (cat.id === 'trip' ? 'place / trip' : cat.id === 'sri' ? 'samarpanai' : cat.id === 'emi' || cat.id === 'loan' ? 'loan' : 'item') : 'Label (optional)'}</label>
         <input id="f-label" type="text" value="${h(d.label)}" placeholder="${cat.kind === 'open' ? 'e.g. ' + openExample(cat) : 'e.g. ' + h(cat.name)}" autocomplete="off" autocapitalize="words" data-bind="label" ${cat.kind === 'open' ? 'required' : ''}>
         ${sugg.length ? `<div class="chips" style="margin-top:8px">${sugg.map(s => `<button type="button" class="chip small ${d.label === s ? 'on' : ''}" data-action="add-suggest" data-label="${h(s)}">${h(s)}</button>`).join('')}</div>` : ''}</div>` : ''}
       ${amountField(d)}
       <div class="grid2">
-        <div class="field"><label for="f-date">Date</label><input id="f-date" type="date" value="${h(d.date)}" data-bind="date"></div>
+        ${dateField(d)}
         <div class="field"><label for="f-paid">Paid via</label>${paySelect('f-paid', 'paidVia', d.paidVia)}</div>
       </div>
+      ${payHintEl()}
       ${cat ? bucketChips(d, cat) : ''}
       <div class="field"><label for="f-note">Note</label><input id="f-note" type="text" value="${h(d.note)}" placeholder="optional" autocomplete="off" data-bind="note"></div>
       ${recurringToggle(d)}`;
@@ -12837,6 +13288,7 @@ function batchCard(r, i, bcats) {
     <div class="amtcell full"><input class="inp" type="text" inputmode="decimal" placeholder="₹ amount" value="${h(r.amount)}" data-row="${i}" data-rb="amount" data-amt autocomplete="off" aria-label="Amount"><button type="button" data-action="batch-del-row" data-i="${i}" aria-label="Remove row">×</button></div>
   </div>`;
 }
+function newCatTile() { return '<button type="button" class="newcat" data-action="add-newcat" aria-label="New category"><span class="em">＋</span><span>New category</span></button>'; }
 function openExample(cat) {
   return { assets: 'Refrigerator', sri: 'Sri Andal Jadai Pushpam', trip: 'Srirangam', emi: 'BoB Home EMI', loan: 'IOB Jewel Loan', maint: 'Vehicle oil', own: 'Lenskart specs', daily: 'Fruits', invest: 'Stocks' }[cat.id] || 'Item name';
 }
@@ -12885,7 +13337,8 @@ function insertOp(op) {
   el.value = v;
   try { el.setSelectionRange(pos, pos); } catch (_) { /* ignore */ }
   el.dispatchEvent(new Event('input', { bubbles: true }));
-  el.focus();
+  if (document.activeElement !== el) { try { el.focus({ preventScroll: true }); } catch (_) { el.focus(); } }
+  try { el.setSelectionRange(pos, pos); } catch (_) { /* ignore */ }
 }
 function readDraftFromDOM() {
   const d = state.add; if (!d) return;
@@ -12905,7 +13358,7 @@ async function saveDraft(andAnother) {
     const data = { type: 'income', date: d.date, month: d.month, label: d.label || d.incomeKind, sub: d.incomeKind, amount: amt, note: d.note, paidVia: d.paidVia, recurring: d.recurring };
     if (d.id) updateEntry(L, d.id, data); else addEntry(L, data);
     toast(d.id ? 'Income updated' : `Income saved for ${monthLabel(d.month)}`);
-    afterSave(andAnother, { type: 'income', date: d.date, month: d.month, incomeKind: d.incomeKind, paidVia: d.paidVia });
+    afterSave(andAnother, { type: 'income', date: d.date, month: d.month, incomeKind: d.incomeKind, paidVia: d.paidVia, payTouched: true });
     return;
   }
   if (d.mode === 'batch') {
@@ -12921,7 +13374,8 @@ async function saveDraft(andAnother) {
       if (cat.kind === 'fixed' && !r.sub) { d.err = `Choose the type of ${cat.name}.`; render(); return; }
     }
     for (const r of rows) { const cat = catById(L, r.catId); addEntry(L, { type: 'expense', date: r.date, catId: cat.id, sub: r.sub, label: r.label, amount: parseAmount(r.amount), paidVia: d.paidVia, bucket: d.bucketOverride || cat.bucket }); }
-    toast(`${rows.length} entr${rows.length === 1 ? 'y' : 'ies'} saved`);
+    if (d.paidVia && d.payTouched && !d.fromQuick) L.settings.lastPaidVia = d.paidVia;
+    toast(`${rows.length} entr${rows.length === 1 ? 'y' : 'ies'} saved, ${money(rows.reduce((s, r) => s + parseAmount(r.amount), 0))} in all`);
     afterSave(andAnother, { type: 'expense', mode: 'batch', paidVia: d.paidVia, bucketOverride: d.bucketOverride, date: rows[rows.length - 1].date, catId: rows[rows.length - 1].catId });
     return;
   }
@@ -12931,25 +13385,29 @@ async function saveDraft(andAnother) {
   if (isNaN(amt) || amt <= 0) { d.err = 'Enter an amount greater than zero.'; render(); return; }
   if (!/^\d{4}-\d{2}-\d{2}$/.test(d.date)) { d.err = 'Pick a date from the calendar.'; render(); return; }
   if (isTransferCat(cat)) {
-    const to = d.to || CASH;
-    if (d.paidVia && d.paidVia === to) { d.err = 'From and To cannot be the same account.'; render(); return; }
-    const data = { type: 'expense', date: d.date, month: monthOf(d.date), catId: cat.id, label: d.label, amount: amt, note: d.note, paidVia: d.paidVia, to, recurring: d.recurring };
-    if (d.id) { updateEntry(L, d.id, data); toast('Transfer updated'); afterSave(false, { type: 'expense', date: d.date }); return; }
+    const asExpense = d.countAs === 'expense';
+    const from = d.paidVia || primaryAccount(L);
+    const to = asExpense ? '' : (d.to || CASH);
+    if (!asExpense && accountFor(L, from) === accountFor(L, to)) { d.err = `From and To are the same account (${accountFor(L, from)}). Pick another account, or choose "Count as expense".`; render(); return; }
+    const data = { type: 'expense', date: d.date, month: monthOf(d.date), catId: cat.id, label: d.label, amount: amt, note: d.note, paidVia: from, to, countAs: asExpense ? 'expense' : '', bucket: asExpense ? (d.bucket || cat.bucket) : '', recurring: d.recurring };
+    if (d.id) { updateEntry(L, d.id, data); toast(asExpense ? 'Entry updated' : 'Transfer updated'); afterSave(false, { type: 'expense', date: d.date }); return; }
     addEntry(L, data);
     state.add = null; state.view = 'home'; state.month = monthOf(d.date);
     commit(); window.scrollTo(0, 0);
-    if (to === CASH) {
-      sheet(`<h3>${fmtINR(amt)} withdrawn to cash</h3><div class="body"><p>It is recorded as a transfer, not an expense. Do you want to note what this cash was (or will be) spent on now? Each row can go to a different category.</p></div>
+    if (asExpense) { toast(`Saved ${money(amt)} from ${accountFor(L, from)} as an expense`); return; }
+    if (isCashAccount(L, accountFor(L, to))) {
+      sheet(`<h3>${money(amt)} withdrawn to cash</h3><div class="body"><p>It is recorded as a transfer, not an expense. Do you want to note what this cash was (or will be) spent on now? Each row can go to a different category.</p></div>
         <div class="btnrow"><button class="btn ghost" data-action="sheet-close">Later</button><button class="btn" data-action="alloc-now" data-date="${h(d.date)}">Record spending now</button></div>`);
-    } else toast(`Transfer saved · ${cat.name}`);
+    } else toast(`Moved ${money(amt)} from ${accountFor(L, from)} to ${accountFor(L, to)}`);
     return;
   }
   if (cat.kind === 'open' && !d.label.trim()) { d.err = `Give this ${cat.name} entry a name.`; render(); return; }
   if (cat.kind === 'fixed' && !d.sub) { d.err = `Choose the type of ${cat.name}.`; render(); return; }
   const data = { type: 'expense', date: d.date, month: monthOf(d.date), catId: cat.id, sub: d.sub, label: d.label, amount: amt, note: d.note, paidVia: d.paidVia, bucket: d.bucket || cat.bucket, recurring: d.recurring };
+  if (d.paidVia && d.payTouched && !d.fromQuick && !d.id) L.settings.lastPaidVia = d.paidVia;
   if (d.id) { updateEntry(L, d.id, data); toast('Entry updated'); }
-  else { addEntry(L, data); toast(`Saved ${fmtINR(amt)} · ${cat.name}`); }
-  afterSave(andAnother, { type: 'expense', catId: cat.id, date: d.date, bucket: d.bucket, paidVia: d.paidVia });
+  else { addEntry(L, data); toast(`Saved ${money(amt)} · ${cat.name}`); }
+  afterSave(andAnother, { type: 'expense', catId: cat.id, date: d.date, bucket: d.bucket, paidVia: d.paidVia, payTouched: d.payTouched });
 }
 function afterSave(andAnother, keep) {
   const wasEdit = !!(state.add && state.add.id);
@@ -13034,9 +13492,15 @@ async function recurringReview() {
     <div class="btnrow"><button class="btn ghost" data-action="sheet-close">Cancel</button><button class="btn" data-action="recurring-apply">Add selected</button></div>`);
 }
 
+/** Copied statements hold amounts in plain text: wipe the clipboard after a while and when the app locks. */
+function scheduleClipClear() { state._clipAt = Date.now(); clearTimeout(state._clipT); state._clipT = setTimeout(clearClipboard, 90000); }
+function clearClipboard() {
+  if (!state._clipAt) return; state._clipAt = 0; clearTimeout(state._clipT);
+  try { if (navigator.clipboard && document.hasFocus()) navigator.clipboard.writeText(' ').catch(() => {}); } catch (_) { /* ignore */ }
+}
 async function copyStatement() {
   const text = monthStatement(state.ledger, state.month);
-  try { await navigator.clipboard.writeText(text); toast('Statement copied. Paste it anywhere you like.'); }
+  try { await navigator.clipboard.writeText(text); scheduleClipClear(); toast('Statement copied. It is wiped from the clipboard after 90 seconds.', 3500); }
   catch (_) { sheet(`<h3>Month statement</h3><textarea style="width:100%;min-height:50vh" readonly>${h(text)}</textarea><div class="btnrow"><button class="btn" data-action="sheet-close">Close</button></div>`); }
 }
 
@@ -13081,6 +13545,7 @@ function reportsView() {
       <thead><tr><th>Category</th><th>Amount</th><th>%</th></tr></thead><tbody>${rows}
       <tr class="tot"><td>Total expenses</td><td class="num">${money(t.expense)}</td><td class="num">${state.masked || !t.income ? '' : fmtPct(t.expense, t.income)}</td></tr>
       <tr><td>Surplus</td><td class="num ${t.savings >= 0 ? 'pos' : 'neg'}">${money(t.savings)}</td><td class="num">${state.masked || !t.income ? '' : fmtPct(t.savings, t.income)}</td></tr>
+      ${(() => { const sp = surplusSplit(L, state.month); return `<tr class="zero"><td style="padding-left:22px">kept in bank</td><td class="num">${money(sp.bank)}</td><td></td></tr><tr class="zero"><td style="padding-left:22px">kept as cash</td><td class="num">${money(sp.cash)}</td><td></td></tr>`; })()}
       <tr class="tot"><td>Salary / income</td><td class="num">${money(t.income)}</td><td class="num">${t.income && !state.masked ? '100%' : ''}</td></tr>
       ${t.transfers.total ? `<tr class="zero"><td>Cash withdrawn (not an expense)</td><td class="num">${money(t.transfers.toCash)}</td><td></td></tr>` : ''}</tbody></table></div></section>`;
   } else {
@@ -13144,19 +13609,24 @@ function categoryForm(c) {
     <div class="grid2" style="grid-template-columns:72px 1fr">
       <div class="field"><label for="cf-emoji">Icon</label><input id="cf-emoji" type="text" value="${h(cat.emoji)}" maxlength="4" autocomplete="off" style="text-align:center;font-size:1.3rem"></div>
       <div class="field"><label for="cf-name">Name</label><input id="cf-name" type="text" value="${h(cat.name)}" autocomplete="off" autocapitalize="words" data-autofocus></div></div>
+    <div class="emojipick" id="cf-emojis" role="group" aria-label="Pick an icon">${EMOJI_PICKS.map(e => `<button type="button" data-emoji="${e}" class="${e === cat.emoji ? 'on' : ''}" aria-label="${e}">${e}</button>`).join('')}</div>
     <div class="field"><label for="cf-kind">What kind of category</label><select id="cf-kind">
       <option value="simple" ${cat.kind === 'simple' ? 'selected' : ''}>Simple — optional label (e.g. Petrol)</option>
       <option value="open" ${cat.kind === 'open' ? 'selected' : ''}>Named items — I type the name each time (e.g. Things, Trips)</option>
       <option value="fixed" ${cat.kind === 'fixed' ? 'selected' : ''}>Fixed types — pick from a list (e.g. Online / Offline)</option>
       <option value="transfer" ${cat.kind === 'transfer' ? 'selected' : ''}>Cash withdrawal / transfer — moves money, not an expense</option></select>
-      <div class="hint" id="cf-kind-hint" ${cat.kind === 'transfer' ? '' : 'hidden'}>Entries here (e.g. ATM withdrawals) do not count in totals. Spend the cash as normal entries paid via Cash.</div></div>
+      <div class="hint" id="cf-kind-hint" ${cat.kind === 'transfer' ? '' : 'hidden'}>Moves money between your accounts (ATM withdrawal, bank to bank). Each entry can still be marked "Count as expense", for example money sent to someone else.</div></div>
     <div class="field" id="cf-subs-wrap" ${cat.kind === 'fixed' ? '' : 'hidden'}><label for="cf-subs">Types, one per line</label><textarea id="cf-subs">${h((cat.subs || []).join('\n'))}</textarea></div>
-    <div class="field" id="cf-bucket-wrap" ${cat.kind === 'transfer' ? 'hidden' : ''}><label for="cf-bucket">Counts towards by default</label><select id="cf-bucket">${BUCKET_ORDER.map(b => `<option value="${b}" ${cat.bucket === b ? 'selected' : ''}>${BUCKETS[b].label}</option>`).join('')}</select></div>
+    <div class="field" id="cf-bucket-wrap"><label for="cf-bucket">Counts towards by default</label><select id="cf-bucket">${BUCKET_ORDER.map(b => `<option value="${b}" ${cat.bucket === b ? 'selected' : ''}>${BUCKETS[b].label}</option>`).join('')}</select><div class="hint" id="cf-bucket-hint" ${cat.kind === 'transfer' ? '' : 'hidden'}>Used when a withdrawal or transfer is marked "Count as expense".</div></div>
+    <div class="grid2" id="cf-extra-wrap" ${cat.kind === 'transfer' ? 'hidden' : ''}>
+      <div class="field"><label for="cf-budget">Monthly budget</label><div class="amount-input slim"><input id="cf-budget" type="text" inputmode="decimal" value="${cat.budget > 0 ? h(String(cat.budget)) : ''}" placeholder="none" data-amt></div></div>
+      <div class="field"><label for="cf-pay">Usually paid via</label><select id="cf-pay"><option value="">Last used</option>${state.ledger.settings.payModes.map(m => `<option value="${h(m)}" ${cat.defaultPay === m ? 'selected' : ''}>${h(m)}</option>`).join('')}</select></div></div>
     <div class="field"><div class="lbl">Colour in charts</div><div class="swatches" id="cf-colors">${CATEGORY_COLORS.map(col => `<button type="button" class="${col === cat.color ? 'on' : ''}" data-color="${col}" style="background:${col}" aria-label="${col}"></button>`).join('')}</div><input type="hidden" id="cf-color" value="${h(cat.color)}"></div>
     <p class="lockmsg" id="cf-err"></p>
-    <div class="btnrow">${!isNew ? `<button class="btn ghost" data-action="cat-archive" data-id="${h(cat.id)}">Archive</button>` : '<button class="btn ghost" data-action="sheet-close">Cancel</button>'}<button class="btn" data-action="cat-save" data-id="${h(cat.id)}">${isNew ? 'Add category' : 'Save'}</button></div>`,
+    <div class="btnrow">${!isNew ? (state.ledger.entries.some(e => e.catId === cat.id) ? `<button class="btn ghost" data-action="cat-archive" data-id="${h(cat.id)}">Archive</button>` : `<button class="btn ghost" data-action="cat-delete" data-id="${h(cat.id)}">Delete</button>`) : '<button class="btn ghost" data-action="sheet-close">Cancel</button>'}<button class="btn" data-action="cat-save" data-id="${h(cat.id)}">${isNew ? 'Add category' : 'Save'}</button></div>`,
     { onOpen: root => {
-      root.querySelector('#cf-kind').addEventListener('change', e => { root.querySelector('#cf-subs-wrap').hidden = e.target.value !== 'fixed'; root.querySelector('#cf-bucket-wrap').hidden = e.target.value === 'transfer'; root.querySelector('#cf-kind-hint').hidden = e.target.value !== 'transfer'; });
+      root.querySelector('#cf-kind').addEventListener('change', e => { const v = e.target.value; root.querySelector('#cf-subs-wrap').hidden = v !== 'fixed'; root.querySelector('#cf-extra-wrap').hidden = v === 'transfer'; root.querySelector('#cf-bucket-hint').hidden = v !== 'transfer'; root.querySelector('#cf-kind-hint').hidden = v !== 'transfer'; });
+      root.querySelector('#cf-emojis').addEventListener('click', e => { const b = e.target.closest('[data-emoji]'); if (!b) return; root.querySelector('#cf-emoji').value = b.dataset.emoji; root.querySelectorAll('#cf-emojis button').forEach(x => x.classList.toggle('on', x === b)); });
       root.querySelector('#cf-colors').addEventListener('click', e => { const b = e.target.closest('[data-color]'); if (!b) return; root.querySelectorAll('#cf-colors button').forEach(x => x.classList.toggle('on', x === b)); root.querySelector('#cf-color').value = b.dataset.color; });
     } });
 }
@@ -13166,8 +13636,90 @@ function saveCategory(id) {
   const subs = byId('cf-subs').value.split('\n').map(s => s.trim()).filter(Boolean);
   if (!name) { byId('cf-err').textContent = 'Give the category a name.'; return; }
   if (kind === 'fixed' && subs.length < 2) { byId('cf-err').textContent = 'Fixed types need at least two entries.'; return; }
-  upsertCategory(state.ledger, { id: id || undefined, name, emoji: byId('cf-emoji').value.trim() || '•', kind, subs: kind === 'fixed' ? subs : [], bucket: byId('cf-bucket').value, color: byId('cf-color').value });
-  closeSheet(); toast(id ? 'Category saved' : `Added ${name}`); commit();
+  if (categoryNameTaken(state.ledger, name, id)) { byId('cf-err').textContent = 'A category with that name already exists.'; return; }
+  const braw = (byId('cf-budget') || { value: '' }).value.trim();
+  const budget = braw ? parseAmount(braw) : 0;
+  if (braw && (isNaN(budget) || budget < 0)) { byId('cf-err').textContent = 'The budget is not a number.'; return; }
+  const c = upsertCategory(state.ledger, { id: id || undefined, name, emoji: byId('cf-emoji').value.trim() || '•', kind, subs: kind === 'fixed' ? subs : [], bucket: byId('cf-bucket').value, color: byId('cf-color').value, budget: kind === 'transfer' ? 0 : budget, defaultPay: kind === 'transfer' ? '' : (byId('cf-pay') || { value: '' }).value });
+  closeSheet(); toast(id ? 'Category saved' : `Added ${name}`);
+  if (!id && state._catFromAdd && state.view === 'add' && state.add) {
+    state.add.catId = c.id; state.add.bucket = c.bucket; state.add.sub = ''; state.add.err = '';
+    if (c.kind === 'transfer') { state.add.paidVia = primaryAccount(state.ledger); state.add.to = CASH; state.add.countAs = ''; }
+    else if (c.defaultPay && !state.add.payTouched) state.add.paidVia = c.defaultPay;
+  }
+  state._catFromAdd = false;
+  commit();
+}
+const EMOJI_PICKS = ['🏠', '👩‍🦳', '📦', '🪔', '🙏', '🧳', '🏦', '🧾', '🍛', '⛽', '🛠️', '💡', '💼', '🧍', '🛒', '📈', '🏧', '🔁', '🎓', '💊', '🏥', '👕', '🎁', '🚌', '🛵', '📱', '🎬', '🍼', '🌸', '🧹', '✂️', '🎉', '📚', '💍', '🛕', '🐄'];
+
+/* ---------- accounts & payment modes ---------- */
+function accountsView() {
+  const L = state.ledger;
+  const rows = accountBalances(L, state.month);
+  const active = rows.filter(r => !r.archived), archived = rows.filter(r => r.archived);
+  const opened = r => r.hasOpening ? `opening ${money(r.opening)} on 1 ${monthShort(r.openingMonth)} ${r.openingMonth.slice(0, 4)}` : (r.kind === 'cash' ? 'counted from your first entry' : 'no opening balance yet');
+  const row = r => `<li class="row click" data-action="acct-open" data-name="${h(r.name)}" role="button" tabindex="0"><span class="em" aria-hidden="true">${ACCOUNT_ICON[r.kind] || '🏦'}</span>
+    <span class="t"><span class="n">${h(r.name)}${r.primary ? ' <span class="tag">salary · main</span>' : ''}</span><span class="m">${h(ACCOUNT_KINDS[r.kind])}, ${opened(r)}</span></span>
+    <span class="amt num ${r.closing < 0 ? 'neg' : ''}">${money(r.closing)}</span></li>`;
+  const modes = L.settings.payModes.filter(m => !accountByName(L, m));
+  const uses = m => activeEntries(L).filter(e => e.paidVia === m).length;
+  const accOpts = sel => accountsList(L).map(a => `<option value="${h(a.name)}" ${sel === a.name ? 'selected' : ''}>${h(a.name)}</option>`).join('');
+  return `${monthbar()}
+  <section class="page"><div class="ph"><h3>Accounts</h3><span class="sub">balance at the end of ${h(monthLabel(state.month))}</span></div>
+    <ul class="rows">${active.map(row).join('')}</ul>
+    <div class="pad-in"><button class="btn soft sm" data-action="acct-open" data-name="">+ Add account</button></div></section>
+  <section class="page"><div class="ph"><h3>Payment modes</h3><span class="sub">takes money from</span></div>
+    <ul class="rows">${modes.length ? modes.map(m => `<li class="row modelink"><span class="em" aria-hidden="true">💳</span><span class="t"><span class="n">${h(m)}</span><span class="m">${uses(m)} entr${uses(m) === 1 ? 'y' : 'ies'}</span></span>
+      <span class="ml"><label class="sr-only" for="ml-${h(m)}">${h(m)} takes money from</label><select id="ml-${h(m)}" data-action="mode-link" data-mode="${h(m)}">${accOpts(L.settings.modeLinks[m])}</select>
+      <button class="btn soft sm" data-action="mode-del" data-mode="${h(m)}" aria-label="Remove ${h(m)}">×</button></span></li>`).join('') : '<li class="empty">Every mode is an account. Add UPI, GPay or a card here.</li>'}</ul>
+    <div class="pad-in"><div class="addmode"><input id="new-mode" type="text" placeholder="New mode, e.g. GPay" aria-label="New payment mode" autocapitalize="words"><select id="new-mode-acc" aria-label="Takes money from">${accOpts(primaryAccount(L))}</select><button class="btn soft sm" data-action="mode-add">Add</button></div></div></section>
+  ${archived.length ? `<section class="page"><div class="ph"><h3>Archived accounts</h3><span class="sub">old entries keep them</span></div><ul class="rows">${archived.map(r => `<li class="row"><span class="em" aria-hidden="true">${ACCOUNT_ICON[r.kind] || '🏦'}</span><span class="t"><span class="n">${h(r.name)}</span><span class="m">${h(ACCOUNT_KINDS[r.kind])}</span></span><button class="btn soft sm" data-action="acct-unarchive" data-name="${h(r.name)}">Restore</button></li>`).join('')}</ul></section>` : ''}
+  <section class="page plain"><div class="pad-in note howto">
+    <p><b>How balances are worked out.</b> Salary credited to an account adds to it. An expense takes money from the account its payment mode points at, so a UPI payment lowers ${h(primaryAccount(L))} straight away. A cash withdrawal moves money from the bank into Cash in hand, and cash expenses then come out of Cash. A withdrawal or transfer marked <i>Count as expense</i> only lowers the bank.</p>
+    <p><b>Opening balance.</b> Enter what the passbook showed on the 1st of a month. From that month on the app keeps the balance for you; compare it with the bank under Passbook balances.</p></div></section>
+  <div class="btnrow"><button class="btn ghost" data-action="go" data-view="balances">Passbook balances at month end</button></div>`;
+}
+function latestStatementFor(L, name) {
+  const n = name.trim().toLowerCase();
+  const hits = L.balances.filter(b => b.accounts.some(a => a.name.trim().toLowerCase() === n)).sort((a, b) => (a.month < b.month ? 1 : -1));
+  if (!hits.length) return null;
+  return { month: hits[0].month, amount: hits[0].accounts.find(a => a.name.trim().toLowerCase() === n).amount };
+}
+function accountSheet(name) {
+  const L = state.ledger; const a = name ? accountByName(L, name) : null; const isNew = !a;
+  const acc = a || { name: '', kind: 'bank', opening: 0, openingMonth: '', primary: false };
+  const isCash = acc.name === CASH;
+  const sugg = isNew ? null : latestStatementFor(L, acc.name);
+  const used = isNew ? 0 : accountUsage(L, acc.name);
+  sheet(`<h3>${isNew ? 'New account' : h(acc.name)}</h3>
+    <div class="grid2"><div class="field"><label for="ac-name">Name</label><input id="ac-name" type="text" value="${h(acc.name)}" ${isCash ? 'readonly' : ''} placeholder="e.g. SBI" autocapitalize="characters" ${isNew ? 'data-autofocus' : ''}></div>
+      <div class="field"><label for="ac-kind">Type</label><select id="ac-kind" ${isCash ? 'disabled' : ''}>${Object.entries(ACCOUNT_KINDS).map(([k, l]) => `<option value="${k}" ${acc.kind === k ? 'selected' : ''}>${l}</option>`).join('')}</select></div></div>
+    <div class="grid2"><div class="field"><label for="ac-open">Opening balance</label><div class="amount-input slim"><input id="ac-open" type="text" inputmode="decimal" value="${acc.openingMonth ? h(String(acc.opening)) : ''}" placeholder="${isCash ? 'cash you had' : 'from passbook'}" data-amt></div></div>
+      <div class="field"><label for="ac-month">On the 1st of</label><input id="ac-month" type="month" value="${h(acc.openingMonth || currentMonth())}"></div></div>
+    <p class="note">${acc.kind === 'card' ? 'For a credit card, enter the amount due as a minus figure, e.g. -4500.' : 'Entries dated before that month are left out of this balance. Leave it empty to count every entry.'}</p>
+    ${sugg ? `<div class="chips"><button type="button" class="chip small" id="ac-sugg">Use passbook ${h(money(sugg.amount))} from the end of ${h(monthLabel(sugg.month))}</button></div>` : ''}
+    ${isCash ? '' : `<div class="toggle"><span class="t">Salary (main) account<small>Salary is credited here by default, and modes like UPI take money from it unless linked elsewhere.</small></span><input type="checkbox" id="ac-primary" ${acc.primary ? 'checked' : ''} class="bigcheck"></div>`}
+    <p class="lockmsg" id="ac-err" role="alert"></p>
+    <div class="btnrow">${!isNew && !isCash ? `<button class="btn ghost" data-action="acct-archive" data-name="${h(acc.name)}" data-used="${used}">Archive</button>` : '<button class="btn ghost" data-action="sheet-close">Cancel</button>'}<button class="btn" data-action="acct-save" data-name="${h(isNew ? '' : acc.name)}">${isNew ? 'Add account' : 'Save'}</button></div>`,
+  { onOpen: root => {
+    const s = root.querySelector('#ac-sugg');
+    if (s) s.addEventListener('click', () => { root.querySelector('#ac-open').value = String(sugg.amount); root.querySelector('#ac-month').value = shiftMonth(sugg.month, 1); });
+  } });
+}
+function saveAccountSheet(oldName) {
+  const L = state.ledger; const err = byId('ac-err');
+  const name = byId('ac-name').value.trim();
+  if (!name) { err.textContent = 'Give the account a name.'; return; }
+  if (L.settings.accounts.some(a => a.name !== oldName && a.name.toLowerCase() === name.toLowerCase())) { err.textContent = 'An account with that name already exists.'; return; }
+  if (!oldName && L.settings.payModes.some(m => m.toLowerCase() === name.toLowerCase()) && !accountByName(L, name)) { /* a mode becomes a real account: fine */ }
+  const raw = byId('ac-open').value.trim();
+  const opening = raw ? parseAmount(raw) : 0;
+  if (raw && isNaN(opening)) { err.textContent = 'The opening balance is not a number.'; return; }
+  const month = byId('ac-month').value;
+  if (raw && !/^\d{4}-\d{2}$/.test(month)) { err.textContent = 'Pick the month the opening balance is for.'; return; }
+  const prim = byId('ac-primary');
+  upsertAccount(L, oldName || null, { name, kind: byId('ac-kind').value, opening: raw ? opening : 0, openingMonth: raw ? month : '', primary: prim ? prim.checked : false });
+  closeSheet(); toast(oldName ? `${name} saved` : `Added ${name}`); commit();
 }
 
 /* ---------- settings ---------- */
@@ -13184,8 +13736,8 @@ function settingsView() {
     <li class="row click" data-action="go" data-view="sync"><span class="em">🔁</span><span class="t"><span class="n">Sync with another device</span><span class="m">Laptop ↔ phone by QR code or sync code. No server.</span></span><span>›</span></li>
     <li class="row click" data-action="go" data-view="prayers"><span class="em">🪔</span><span class="t"><span class="n">Prayers</span><span class="m">Opening slogans and closing line</span></span><span>›</span></li>
     <li class="row click" data-action="go" data-view="categories"><span class="em">🗂️</span><span class="t"><span class="n">Categories</span><span class="m">Add, rename, colour, reorder, archive</span></span><span>›</span></li>
-    <li class="row click" data-action="go" data-view="balances"><span class="em">🏦</span><span class="t"><span class="n">Bank balances</span><span class="m">Month-end IOB / BOB / other balances</span></span><span>›</span></li>
-    <li class="row click" data-action="paymodes"><span class="em">💳</span><span class="t"><span class="n">Payment modes &amp; accounts</span><span class="m">${h(s.payModes.join(', '))}</span></span><span>›</span></li>
+    <li class="row click" data-action="go" data-view="accounts"><span class="em">🏦</span><span class="t"><span class="n">Accounts &amp; payment modes</span><span class="m">${h(accountsList(L).map(a => a.name + (a.primary ? ' (main)' : '')).join(', '))}. Opening balances, UPI and card links.</span></span><span>›</span></li>
+    <li class="row click" data-action="go" data-view="balances"><span class="em">📒</span><span class="t"><span class="n">Passbook balances</span><span class="m">What the bank showed at month end, to check against the app</span></span><span>›</span></li>
     <li class="row click" data-action="go" data-view="trash"><span class="em">🗑️</span><span class="t"><span class="n">Trash</span><span class="m">${trashEntries(L).length} deleted entries can be restored</span></span><span>›</span></li>
     <li class="row click" data-action="go" data-view="audit"><span class="em">📜</span><span class="t"><span class="n">Change log</span><span class="m">Every add, edit, delete and sync</span></span><span>›</span></li>
   </ul></section>
@@ -13196,7 +13748,8 @@ function settingsView() {
     ${tog('lockOnHide', 'Lock when I leave the app', 'Switching apps or turning the screen off locks immediately.')}
     ${tog('maskDefault', 'Hide amounts on unlock', 'Amounts show as ₹ •••• until you tap the eye.')}
     ${wipeTog}
-    <div class="toggle"><span class="t">Change ${state.env.pinType === 'pin' ? 'PIN' : 'passphrase'}<small>Re-encrypts the vault with the new one.</small></span><button class="btn soft sm" data-action="pin-change">Change</button></div>
+    <div class="toggle"><span class="t">Change ${state.env.pinType === 'pin' ? 'PIN' : 'passphrase'}<small>Re-encrypts the vault with the new one. Easy PINs like 1234 or 1111 are refused.</small></span><button class="btn soft sm" data-action="pin-change">Change</button></div>
+    <p class="note pad-in" style="margin:0;padding-bottom:12px">Your ${state.env.pinType === 'pin' ? 'PIN' : 'passphrase'} is asked again before a readable CSV is exported, the ledger is replaced from a file, or a protection is switched off. A copied statement is wiped from the clipboard after 90 seconds.</p>
   </section>
 
   <section class="page ${needsFileSave() ? 'gold' : ''}"><div class="ph"><h3>${needsFileSave() ? 'Save' : 'Backup'}</h3><span class="sub">last: ${h(lastB)}</span></div>
@@ -13214,7 +13767,7 @@ function settingsView() {
     ${state.fileMode ? '' : standalone ? '<div class="toggle"><span class="t">Installed as an app<small>Opening from the home-screen icon keeps storage safest.</small></span><span class="ok">✓</span></div>'
       : canInstall ? '<div class="toggle"><span class="t">Add to home screen<small>Opens full-screen like a native app.</small></span><button class="btn soft sm" data-action="install">Install</button></div>'
       : `<div class="toggle"><span class="t">Add to home screen<small>${isiOS ? 'Safari: tap Share, then "Add to Home Screen". Note: the home-screen copy keeps its own data; open a saved ledger file in it once.' : 'Chrome: tap ⋮ menu, then "Add to Home screen" / "Install app".'}</small></span></div>`}
-    <div class="toggle"><span class="t">Version<small>Build 5422e24a1a. ${state.fileMode ? 'A newer SriSadagopam.html opens your current file via "Open my ledger file".' : 'Updates never touch your data.'}</small></span><button class="btn soft sm" data-action="check-update">${state.fileMode ? 'How to update' : 'Check for update'}</button></div>
+    <div class="toggle"><span class="t">Version<small>Build 69d420f2e4. ${state.fileMode ? 'A newer SriSadagopam.html opens your current file via "Open my ledger file".' : 'Updates never touch your data.'}</small></span><button class="btn soft sm" data-action="check-update">${state.fileMode ? 'How to update' : 'Check for update'}</button></div>
     <div class="toggle click" data-action="go" data-view="privacy" role="button" tabindex="0"><span class="t">Privacy status<small>What is sealed, where data lives, checks you can run.</small></span><span>›</span></div>
     <div class="toggle click" data-action="whatsnew" role="button" tabindex="0"><span class="t">What's new in this version</span><span>›</span></div>
   </section>
@@ -13246,10 +13799,11 @@ function balancesView() {
   const b = getBalances(L, state.month);
   const names = new Set(L.balances.flatMap(x => x.accounts.map(a => a.name)));
   const rows = b && b.accounts.length ? b.accounts : Array.from(names).map(n => ({ name: n, amount: '' }));
-  if (!rows.length) rows.push({ name: 'IOB', amount: '' }, { name: 'BOB', amount: '' });
+  if (!rows.length) accountsList(L).filter(a => a.kind !== 'cash').forEach(a => rows.push({ name: a.name, amount: '' }));
+  if (!rows.length) rows.push({ name: primaryAccount(L), amount: '' });
   const cash = hasCashFlow(L) ? cashInHand(L, state.month) : null;
   return `${monthbar()}<form id="bal-form" novalidate autocomplete="off">
-    <section class="page"><div class="ph"><h3>Bank balances at month end</h3><span class="sub">as in the old sheet: IOB, BOB…</span></div>
+    <section class="page"><div class="ph"><h3>Passbook balances at month end</h3><span class="sub">what the bank showed; Home compares it with the app</span></div>
       <div class="pad-in" id="bal-rows">${rows.map((r, i) => `<div class="bcard" style="grid-template-columns:1fr 1fr"><input class="inp" type="text" value="${h(r.name)}" data-bal="${i}" data-bk="name" placeholder="Account" aria-label="Account"><input class="inp" type="text" inputmode="decimal" value="${h(r.amount)}" data-bal="${i}" data-bk="amount" data-amt placeholder="₹" aria-label="Balance" style="text-align:right;font-weight:600"></div>`).join('')}
       <button type="button" class="btn soft sm" data-action="bal-add-row" style="margin-top:8px">+ Add account</button>${opbar()}</div>
       ${cash !== null ? `<div class="pad-in"><div class="infobox">Cash in hand at the end of ${h(monthLabel(state.month))} works out to <b>${money(cash)}</b> from your withdrawals and cash spending.</div></div>` : ''}
@@ -13284,7 +13838,8 @@ function privacyViewSync(info) {
     <p><b>No network, ever.</b> The page's Content Security Policy forbids all connections, fonts, frames and forms, and the code disables fetch, XMLHttpRequest, WebSocket, beacons and WebRTC before anything else runs. Being online changes nothing.</p>
     <p><b>One file.</b> "Save ledger file" writes a complete copy of this app with your encrypted vault inside. It opens from any browser or file manager, needs no website and no internet, and is the surest way to keep your data: a browser cannot clear a file. The vault is stored in two browser areas as well and read from whichever is newest.</p>
     <p><b>Sync without a server.</b> Sync codes are encrypted with your PIN before they leave this device and travel by QR code (camera to screen), or as text/file through any channel you choose. The camera is used only while the scanner is open.</p>
-    <p><b>No traces.</b> No URLs carry data, so browser history shows only the app address. Fields have autofill off. Nothing is indexed by search engines.</p>
+    <p><b>No traces.</b> No URLs carry data, so browser history shows only the app address. Fields have autofill, autocorrect and spell-check off, so the phone keyboard does not learn your item names and amounts. Nothing is indexed by search engines.</p>
+    <p><b>Guard rails.</b> Easy PINs (1234, 1111, 2580…) are refused. The PIN is asked again before a readable CSV is exported, the ledger is replaced, or a protection is switched off. Wrong PIN attempts are counted, and the next successful unlock tells you how many there were. A copied statement is wiped from the clipboard after 90 seconds or when the app locks. The app refuses to run inside another web page.</p>
     <p><b>Limits to know.</b> A 4-digit PIN can be brute-forced by someone who copies the vault file off an unlocked phone; use 6+ digits or a passphrase. Screenshots and phone backups are outside the app's control. Losing the PIN means losing the data.</p>
   </div></section>`;
 }
@@ -13309,7 +13864,11 @@ async function showPrivacy() {
   info['Entries in vault'] = activeEntries(state.ledger).length;
   info['Vault last saved'] = fmtLocal(state.ledger.meta.updatedAt);
   info['Last backup'] = state.ledger.settings.lastBackupAt ? fmtLocal(state.ledger.settings.lastBackupAt) : 'never';
-  info['Build'] = '5422e24a1a';
+  info['Previous unlock'] = state.lastUnlockAt ? fmtLocal(new Date(state.lastUnlockAt).toISOString()) : 'not recorded yet';
+  info['Runs inside another page'] = window.top !== window.self;
+  info['Easy PINs refused'] = true;
+  info['PIN asked again for exports and switching protections off'] = true;
+  info['Build'] = '69d420f2e4';
   if (state.view === 'privacy') byId('view').innerHTML = privacyViewSync(info);
 }
 
@@ -13346,6 +13905,7 @@ async function shareBlob(name, blob, title) {
 }
 async function shareBackup() { await shareBlob(backupName(), await makeBackupBlob(), 'Sri Sadagopam backup'); render(); }
 async function exportCSV() {
+  if (!(await reauth('A CSV file is not encrypted. Confirm it is you before it is written.'))) return;
   const ok = await confirmDialog({ title: 'Export a plain CSV?', body: '<p>This file is <b>not encrypted</b>. Anyone who gets it can read every entry. Delete it after use, or keep it somewhere you trust.</p>', ok: 'Export CSV' });
   if (!ok) return;
   downloadBlob(`SriSadagopam-${todayISO()}.csv`, new Blob([toCSV(state.ledger)], { type: 'text/csv;charset=utf-8' }));
@@ -13417,6 +13977,7 @@ async function applyImport(mode) {
   if (mode === 'replace') {
     const ok = await confirmDialog({ title: 'Replace the whole ledger?', body: '<p>Everything currently on this device is replaced by the backup. Deleted entries in Trash are lost too.</p>', ok: 'Replace', danger: true });
     if (!ok) return;
+    if (!(await reauth('Replacing throws away every entry on this device.'))) return;
     const keepDevice = state.ledger.settings.deviceName;
     state.ledger = inc; state.ledger.settings.deviceName = keepDevice; audit(state.ledger, 'import', '', 'ledger replaced from backup');
     toast('Ledger replaced from backup.');
@@ -13444,6 +14005,7 @@ async function changePin() {
           if (t === 'pin' && !/^\d{4,8}$/.test(a)) { err.textContent = 'PIN must be 4 to 8 digits.'; return; }
           if (t === 'pass' && a.length < 8) { err.textContent = 'Passphrase must be at least 8 characters.'; return; }
           if (a !== b) { err.textContent = 'They do not match.'; return; }
+          const weak = weakSecret(a, t); if (weak) { err.textContent = weak; return; }
           res({ t, a });
         });
       } });
@@ -13769,6 +14331,16 @@ function whatsNew() {
   sheet(`<h3>What's new</h3><div class="body">
     ${notes.length ? `<div class="warnbox">${notes.map(n => `<p>${h(n)}</p>`).join('')}</div>` : ''}
     <ul style="padding-left:18px;margin:6px 0;line-height:1.5">
+      <li><b>+ and − keys work on phones.</b> Type 1755+1907.5 or 500−50 in any amount box.</li>
+      <li><b>Accounts.</b> HDFC (salary), other banks and Cash each keep a running balance. UPI and Card take money from HDFC; a cash withdrawal moves money from HDFC into Cash in hand. Set opening balances under More → Accounts.</li>
+      <li><b>Surplus in two parts:</b> how much stayed in the bank and how much is in cash.</li>
+      <li><b>Withdrawals and transfers</b> can be counted as an expense when you do not want to itemise the cash, or when money goes to someone else.</li>
+      <li><b>Spend from cash</b> shows the cash you have before and after each entry.</li>
+      <li><b>Categories:</b> add one straight from the entry screen, add types on the spot, pick an icon, set a monthly budget and a usual payment mode.</li>
+      <li><b>Security:</b> easy PINs refused, PIN asked again for exports, wrong attempts reported, clipboard wiped after copying.</li>
+    </ul>
+    <p class="note">Earlier in this version:</p>
+    <ul style="padding-left:18px;margin:6px 0;line-height:1.5">
       <li><b>Your entries now stay put.</b> The vault is kept in two storage areas and read from whichever is newest, which fixes the "opens as a new app" problem on phones.</li>
       <li><b>The app is one file.</b> More → <b>Save ledger file</b> writes SriSadagopam-….html with your encrypted data inside. Open that file anywhere, even without hosting or internet.</li>
       <li><b>No set-up wizard.</b> Prayers live under More → Prayers. Restoring a file or backup keeps its PIN.</li>
@@ -13831,10 +14403,46 @@ function onAction(a, e) {
     case 'setup-finish': setupFinish(); break;
     case 'lost-fresh': state.view = 'setup'; render(); break;
     /* add form */
-    case 'add-type': readDraftFromDOM(); state.add.type = a.dataset.t; state.add.err = ''; if (a.dataset.t === 'income') { state.add.month = monthOf(state.add.date); if (Number(state.add.date.slice(8)) >= 25) state.add.month = shiftMonth(state.add.month, 1); } render(); break;
+    case 'add-type': readDraftFromDOM(); state.add.type = a.dataset.t; state.add.err = ''; if (!state.add.payTouched) state.add.paidVia = defaultPaidVia(a.dataset.t, catById(L, state.add.catId)); if (a.dataset.t === 'income') { state.add.month = monthOf(state.add.date); if (Number(state.add.date.slice(8)) >= 25) state.add.month = shiftMonth(state.add.month, 1); } render(); break;
     case 'add-mode': readDraftFromDOM(); state.add.mode = a.dataset.m; state.add.err = ''; if (a.dataset.m === 'batch' && state.add.catId && !isTransferCat(catById(L, state.add.catId))) state.add.rows.forEach(r => { if (!r.catId) r.catId = state.add.catId; }); render(); break;
-    case 'add-cat': { readDraftFromDOM(); const c = catById(L, a.dataset.id); state.add.catId = c.id; state.add.bucket = c.bucket; state.add.sub = c.kind === 'fixed' && c.subs.length === 1 ? c.subs[0] : ''; state.add.err = ''; render(); const lab = byId('f-label') || byId('f-amount'); if (lab && !('ontouchstart' in window)) lab.focus(); break; }
+    case 'add-cat': { readDraftFromDOM(); const c = catById(L, a.dataset.id); const wasMove = isTransferCat(catById(L, state.add.catId)); state.add.catId = c.id; state.add.bucket = c.bucket; state.add.sub = c.kind === 'fixed' && c.subs.length === 1 ? c.subs[0] : ''; state.add.err = '';
+      if (isTransferCat(c)) { if (!state.add.payTouched || isCashAccount(L, accountFor(L, state.add.paidVia))) state.add.paidVia = primaryAccount(L); state.add.to = /atm|cash/i.test(c.name) ? CASH : otherAccount(L, accountFor(L, state.add.paidVia)); state.add.countAs = ''; }
+      else if (!state.add.payTouched || wasMove) state.add.paidVia = defaultPaidVia('expense', c);
+      render(); const lab = byId('f-label') || byId('f-amount'); if (lab && !('ontouchstart' in window)) lab.focus(); break; }
     case 'add-sub': readDraftFromDOM(); state.add.sub = a.dataset.sub; render(); break;
+    case 'add-date': readDraftFromDOM(); state.add.date = a.dataset.d; if (state.add.type === 'expense') state.add.month = monthOf(a.dataset.d); render(); break;
+    case 'add-countas': { readDraftFromDOM(); state.add.countAs = a.dataset.c; const c = catById(L, state.add.catId); if (a.dataset.c === 'expense') { if (!BUCKETS[state.add.bucket]) state.add.bucket = c ? c.bucket : 'own'; } else if (!state.add.to || accountFor(L, state.add.to) === accountFor(L, state.add.paidVia)) state.add.to = c && /atm|cash/i.test(c.name) ? CASH : otherAccount(L, accountFor(L, state.add.paidVia)); render(); break; }
+    case 'add-newcat': readDraftFromDOM(); state._catFromAdd = true; categoryForm(null); break;
+    case 'add-newsub': (async () => {
+      readDraftFromDOM(); const c = catById(L, state.add.catId); if (!c) return;
+      const v = await askText(`New type of ${c.name}`, 'Type name', { placeholder: 'e.g. Hotel' });
+      if (!v) return;
+      const n = addSubType(L, c.id, v);
+      if (!n) { const ex = c.subs.find(s => s.toLowerCase() === v.toLowerCase()); if (ex) state.add.sub = ex; toast('That type already exists, so it is picked.'); render(); return; }
+      state.add.sub = n; toast(`Added ${n} to ${c.name}`); commit(); })(); break;
+    case 'quick-withdraw': { const c = L.categories.find(x => x.id === 'atm' && !x.archived) || visibleCategories(L).find(x => isTransferCat(x) && /atm|cash/i.test(x.name)) || visibleCategories(L).find(isTransferCat);
+      if (!c) { toast('Add a "Cash withdrawal / transfer" category under More → Categories first.'); break; }
+      state.add = newDraft({ catId: c.id, paidVia: primaryAccount(L), to: CASH }); state.view = 'add'; render(); window.scrollTo(0, 0); break; }
+    case 'quick-cashspend': state.add = newDraft({ paidVia: CASH, payTouched: true, fromQuick: true }); state.view = 'add'; render(); window.scrollTo(0, 0); break;
+    case 'quick-transfer': { const c = L.categories.find(x => x.id === 'xfer' && !x.archived) || visibleCategories(L).find(x => isTransferCat(x) && !/atm|cash/i.test(x.name)) || visibleCategories(L).find(isTransferCat);
+      if (!c) { toast('Add a "Cash withdrawal / transfer" category under More → Categories first.'); break; }
+      const from = primaryAccount(L); state.add = newDraft({ catId: c.id, paidVia: from, to: otherAccount(L, from) }); state.view = 'add'; render(); window.scrollTo(0, 0); break; }
+    case 'acct-open': accountSheet(a.dataset.name); break;
+    case 'acct-save': saveAccountSheet(a.dataset.name); break;
+    case 'acct-archive': (async () => {
+      const n = a.dataset.name, used = Number(a.dataset.used) || 0;
+      closeSheet();
+      const ok = await confirmDialog({ title: `Archive ${n}?`, body: `<p>It leaves the account and payment pickers.${used ? ` Its ${used} entries stay and keep their history.` : ''} You can restore it from Accounts.</p>`, ok: 'Archive' });
+      if (!ok) return;
+      setAccountArchived(L, n, true); toast(`${n} archived`); commit(); })(); break;
+    case 'acct-unarchive': setAccountArchived(L, a.dataset.name, false); toast(`${a.dataset.name} restored`); commit(); break;
+    case 'mode-add': { const m = byId('new-mode').value.trim(); if (!m) { toast('Type the name of the payment mode first.'); break; }
+      if (!addPayMode(L, m, byId('new-mode-acc').value)) { toast('That payment mode already exists.'); break; }
+      toast(`Added ${m}`); commit(); break; }
+    case 'mode-del': { const m = a.dataset.mode; const used = activeEntries(L).filter(e => e.paidVia === m).length;
+      if (used) { toast(`${used} entr${used === 1 ? 'y uses' : 'ies use'} ${m}, so it stays. Point it at another account instead.`, 4500); break; }
+      removePayMode(L, m); toast(`Removed ${m}`); commit(); break; }
+    case 'cat-delete': (async () => { const c = catById(L, a.dataset.id); closeSheet(); const ok = await confirmDialog({ title: `Delete ${c ? c.name : 'category'}?`, body: '<p>No entry uses it, so nothing else changes.</p>', ok: 'Delete', danger: true }); if (!ok) return; if (deleteCategory(L, a.dataset.id)) { toast('Category deleted'); commit(); } else toast('Entries use this category; archive it instead.'); })(); break;
     case 'add-bucket': readDraftFromDOM(); state.add.bucket = a.dataset.b; render(); break;
     case 'add-bucket-override': readDraftFromDOM(); state.add.bucketOverride = a.dataset.b; render(); break;
     case 'add-suggest': readDraftFromDOM(); state.add.label = a.dataset.label; render(); { const am = byId('f-amount'); if (am) am.focus(); } break;
@@ -13858,8 +14466,12 @@ function onAction(a, e) {
     case 'cat-up': moveCategory(L, a.dataset.id, -1); commit(); break;
     case 'cat-down': moveCategory(L, a.dataset.id, 1); commit(); break;
     /* settings */
-    case 'set-toggle': L.settings[a.dataset.k] = !L.settings[a.dataset.k]; commit(); break;
+    case 'set-toggle': (async () => {
+      const k = a.dataset.k;
+      if (k === 'lockOnHide' && L.settings[k] && !(await reauth('Turning this off leaves the ledger open when you switch apps.'))) return;
+      L.settings[k] = !L.settings[k]; audit(L, 'security', '', `${k} ${L.settings[k] ? 'on' : 'off'}`); commit(); })(); break;
     case 'set-wipe': (async () => {
+      if (state.env.wipeAfterFails && !(await reauth('Turning this off lets someone keep guessing your PIN.'))) return;
       if (!state.env.wipeAfterFails) { const ok = await confirmDialog({ title: 'Turn on wipe after 10 wrong attempts?', body: '<p>Ten wrong PINs in a row will destroy the vault on this device. Make sure you take backups.</p>', ok: 'Turn on', danger: true }); if (!ok) return; }
       state.env.wipeAfterFails = !state.env.wipeAfterFails; audit(L, 'security', '', `wipe after fails ${state.env.wipeAfterFails ? 'on' : 'off'}`); commit(); })(); break;
     case 'pin-change': changePin(); break;
@@ -13908,15 +14520,24 @@ function wireEvents() {
   document.addEventListener('click', e => {
     bump();
     const op = e.target.closest('[data-op]');
-    if (op) { e.preventDefault(); insertOp(op.dataset.op); return; }
+    // A tap was already handled on pointerdown; a click with no pointer before it (keyboard, old browsers) still works.
+    if (op) { e.preventDefault(); if (Date.now() - (state._opAt || 0) > 800) insertOp(op.dataset.op); return; }
     const a = e.target.closest('[data-action]');
     if (!a) return;
     if (a.tagName === 'A' || a.type === 'submit') e.preventDefault();
     onAction(a, e);
   });
-  // Keep the keyboard open and the caret in place when tapping operator keys.
-  document.addEventListener('pointerdown', e => { if (e.target.closest('[data-op]')) e.preventDefault(); }, { passive: false });
-  document.addEventListener('touchstart', e => { if (e.target.closest('[data-op]')) e.preventDefault(); }, { passive: false });
+  // Calculator keys (+ − × ÷ ( ) ⌫ =). Phones never fire "click" after a cancelled touchstart, so the key acts on
+  // pointerdown. Cancelling touchstart keeps the number keyboard open and the caret where it was.
+  document.addEventListener('pointerdown', e => {
+    const op = e.target.closest('[data-op]'); if (!op) return;
+    e.preventDefault(); state._opAt = Date.now(); insertOp(op.dataset.op);
+  }, { passive: false });
+  document.addEventListener('touchstart', e => {
+    const op = e.target.closest('[data-op]'); if (!op) return;
+    e.preventDefault();
+    if (!window.PointerEvent && Date.now() - (state._opAt || 0) > 300) { state._opAt = Date.now(); insertOp(op.dataset.op); }
+  }, { passive: false });
   document.addEventListener('focusin', e => {
     if (e.target.matches && e.target.matches('[data-amt]')) state.amtTarget = e.target;
     const m = e.target.closest && e.target.closest('.mark[data-tip]'); if (m) { const r = m.getBoundingClientRect(); showTip(m, r.left + r.width / 2, r.top); }
@@ -13941,17 +14562,25 @@ function wireEvents() {
   document.addEventListener('input', e => {
     bump();
     const t = e.target;
-    if (t.id === 'f-amount') updateCalc(t);
+    if (t.id === 'f-amount') { updateCalc(t); updatePayHint(); }
+    else if (t.dataset && t.dataset.rb === 'amount') updatePayHint();
     if (t.id === 'lg-q') { state.ledgerFilter.q = t.value; const pos = t.selectionStart; render(); const q = byId('lg-q'); if (q) { q.focus(); q.setSelectionRange(pos, pos); } }
   });
   document.addEventListener('change', e => {
     const t = e.target;
     if (t.id === 'month-pick' && /^\d{4}-\d{2}$/.test(t.value)) { state.month = t.value; render(); }
     if (t.id === 'lg-cat') { state.ledgerFilter.catId = t.value; render(); }
-    if (t.dataset.action === 'set-select') { state.ledger.settings[t.dataset.k] = Number(t.value); commit(); }
+    if (t.dataset.action === 'set-select') {
+      const k = t.dataset.k, v = Number(t.value);
+      if (k === 'autoLockSec' && v === 0) { (async () => { if (await reauth('With auto-lock off, an unattended phone stays open.')) { state.ledger.settings[k] = v; audit(state.ledger, 'security', '', 'auto-lock off'); commit(); } else render(); })(); }
+      else { state.ledger.settings[k] = v; commit(); }
+    }
+    if (t.dataset.action === 'mode-link') { setModeLink(state.ledger, t.dataset.mode, t.value); toast(`${t.dataset.mode} now takes money from ${t.value}`); commit(); }
     if (t.dataset.action === 'theme') { try { localStorage.setItem('ss.theme', t.value); } catch (_) { /* ignore */ } window.__stampTheme && window.__stampTheme(); }
     if (t.dataset.rb === 'catId') { readDraftFromDOM(); render(); }
+    if ((t.id === 'f-paid' || t.id === 'f-from') && state.add) state.add.payTouched = true;
     if (t.id === 'f-to' || t.id === 'f-from') { readDraftFromDOM(); render(); }
+    if (t.id === 'f-paid' || t.id === 'f-date' || t.id === 'f-month') { readDraftFromDOM(); updatePayHint(); }
   });
   ['pointerdown', 'touchstart', 'scroll'].forEach(ev => document.addEventListener(ev, bump, { passive: true }));
 
@@ -14000,6 +14629,8 @@ function devForceFileMode() {
   try { return /^(127\.0\.0\.1|localhost)$/.test(location.hostname) && sessionStorage.getItem('ss.devFileMode') === '1'; } catch (_) { return false; }
 }
 async function boot() {
+  try { if (window.top !== window.self) { document.body.innerHTML = '<p class="noscript">Sri Sadagopam does not open inside another page. Open its link or file directly.</p>'; return; } }
+  catch (_) { document.body.innerHTML = '<p class="noscript">Sri Sadagopam does not open inside another page.</p>'; return; }
   wireEvents();
   state.fileMode = !/^https?:$/.test(location.protocol) || devForceFileMode();
   state.embedded = readEmbeddedVault();

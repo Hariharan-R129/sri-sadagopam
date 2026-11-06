@@ -1,7 +1,7 @@
 /* Sri Sadagopam service worker — caches the app shell so it opens with no
    network at all, and refuses every request that is not same-origin GET.
-   Build stamp: 5422e24a1a */
-const CACHE = 'sri-sadagopam-5422e24a1a';
+   Build stamp: 69d420f2e4 */
+const CACHE = 'sri-sadagopam-69d420f2e4';
 const ASSETS = [
   './', './index.html', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/maskable-512.png'

@@ -4,4 +4,4 @@ Private, offline household khatabook. **This repository holds only the app code.
 
 Open the app: https://hariharan-r129.github.io/sri-sadagopam/
 
-Build `5422e24a1a`. Source and documentation live outside this repository.
+Build `69d420f2e4`. Source and documentation live outside this repository.
